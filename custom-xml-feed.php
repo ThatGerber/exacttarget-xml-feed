@@ -29,15 +29,9 @@ License:           GPL2
 
 /* wordpress do all the work because of the "do_feed_" prefix */
 
-if ( function_exists( 'add_image_size' ) ) {
-	add_image_size( 'featured-email-thumb', 200, 133, true ); //300 pixels wide (and unlimited height)
-	add_image_size( 'email-thumb', 125, 90, true ); //(cropped)
-}
 
-add_action( 'do_feed_xtxml', 'do_feed_xtxml', 10, 1 );
-function do_feed_xtxml() {
-	load_template( dirname(__FILE__) . '/feed-template.php' );
-}
+include( 'xt-xml.class.php' );
+new XT_XML;
 
 if ( is_admin() ) {
 
