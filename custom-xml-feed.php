@@ -41,7 +41,7 @@ function do_feed_xtxml() {
 
 if ( is_admin() ) {
 
-	include( 'admin/admin.php');
+	include( 'admin/xt-xml-admin.class.php');
 	new XT_XML_Admin;
 
 }
