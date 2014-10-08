@@ -13,7 +13,7 @@ class XT_XML {
 		add_action( 'do_feed_xtxml', array($this, 'do_feed_xtxml'), 10, 1 );
 
 		// Adds image sizes
-		add_action( 'after_theme_setup', array( $this, 'add_image_sizes') );
+		add_action( 'after_setup_theme', array( $this, 'add_image_sizes') );
 	}
 
 	public function add_image_sizes() {
