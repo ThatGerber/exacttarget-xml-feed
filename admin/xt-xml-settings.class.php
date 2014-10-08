@@ -6,6 +6,7 @@ class XT_XML_Settings {
 
 	CONST OPTIONS_STR = 'exact_target_xml';
 	CONST OPTIONS_GRP = 'exact_target_xml-group';
+	CONST FIELDS_STR  = 'exact_target_xml_fields';
 	CONST TRANSIENT_1 = 'foauhvahuhrrr';
 	CONST TRANSIENT_2 = 'foaasdfadggguhrrr';
 
@@ -39,25 +40,41 @@ class XT_XML_Settings {
 		)
 	);
 
-
-
 	public function __construct() {
 
 		// Register settings
 		$this->register_settings();
-
 		// Creates the settings var to be referred to
 		$this->options = get_option( self::OPTIONS_STR );
-
 		// Add sections to settings page.
 		$this->add_sections();
+
+		// Errors
+		add_action( 'admin_notices', array($this, 'add_errors') );
+
+	}
+
+	/**
+	 * @param string $id
+	 * @param string $title
+	 * @param string $field
+	 * @param string $description
+	 */
+	public function add_settings_field( $id, $title, $field, $description = '' ) {
+
+		$this->fields[] =  array(
+			'id'          => $id,
+			'title'       => $title,
+			'field'       => $field,
+			'description' => $description
+		);
 
 	}
 
 	/**
 	 * Register the plugin settings.
 	 */
-	protected function register_settings() {
+	public function register_settings() {
 		// register our settings
 		register_setting(
 			self::OPTIONS_GRP,
@@ -84,6 +101,10 @@ class XT_XML_Settings {
 		}
 	}
 
+	public function add_errors() {
+		settings_errors( self::OPTIONS_STR );
+	}
+
 
 	/**
 	 * Sanitize and validate input. Accepts an array, return a sanitized array.
@@ -96,6 +117,12 @@ class XT_XML_Settings {
 		$new_input = array();
 
 		set_transient(self::TRANSIENT_1, $input, 60);
+
+		if ($input === null ) {
+			$this->new_error('The input is blank', 'error');
+
+			return $new_input;
+		}
 
 		$new_input['tag1_size'] = wp_filter_nohtml_kses($input['tag1_size']);
 		$new_input['tag1_name'] = wp_filter_nohtml_kses($input['tag1_name']);
@@ -117,7 +144,7 @@ class XT_XML_Settings {
 	 *      Field = Type of field,
 	 *      Description = Description below field
 	 */
-	public function create_settings_field( $settings ) {
+	protected function create_settings_field( $settings ) {
 		add_settings_field(
 			$settings['id'], // ID
 			$settings['title'], // Title
@@ -162,6 +189,15 @@ class XT_XML_Settings {
 	protected function input_field_value($value) {
 
 		return ( isset( $this->options[$value] ) ? $this->options[$value] : '');
+	}
+
+	public function new_error($message, $type) {
+		add_settings_error(
+			self::OPTIONS_STR,
+			'settings_updated',
+			$message,
+			$type
+		);
 
 	}
 }

@@ -3,6 +3,8 @@
 if ( ! class_exists( 'XT_XML_Admin_Form' ) ) {
 
 class XT_XML_Admin_Form {
+	CONST TRANSIENT_1 = 'foauhvahuhrrr';
+	CONST TRANSIENT_2 = 'foaasdfadggguhrrr';
 
 	protected static $instance;
 
@@ -16,6 +18,17 @@ class XT_XML_Admin_Form {
 
 
 	public function __construct() {
+
+		$this->settings = new XT_XML_Settings;
+
+		$this->admin_form();
+
+	}
+
+	/**
+	 * Options page callback
+	 */
+	public function admin_form() {
 		?>
 		<div class="wrap">
 			<h1><?php echo XT_XML_Admin::PAGE_TITLE; ?></h1>
@@ -32,13 +45,6 @@ class XT_XML_Admin_Form {
 
 		<?php $this->debug_data(); ?>
 	<?php
-
-	}
-
-	/**
-	 * Options page callback
-	 */
-	public function admin_form() {
 	}
 
 	private function debug_data() {
@@ -46,11 +52,11 @@ class XT_XML_Admin_Form {
 		<?php var_dump( $this->settings ); ?>
 		<h2>Transients</h2>
 		<p>input</p>
-		<?php var_dump( get_transient(XT_XML_Admin::TRANSIENT_1) ); ?>
+		<?php var_dump( get_transient(self::TRANSIENT_1) ); ?>
 		<p>new_input</p>
-		<?php var_dump( get_transient(XT_XML_Admin::TRANSIENT_2) );
-		delete_transient(XT_XML_Admin::TRANSIENT_1);
-		delete_transient(XT_XML_Admin::TRANSIENT_2);
+		<?php var_dump( get_transient(self::TRANSIENT_2) );
+		delete_transient(self::TRANSIENT_1);
+		delete_transient(self::TRANSIENT_2);
 	}
 
 }
