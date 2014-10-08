@@ -12,6 +12,8 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		CONST PLUGIN_SLUG = 'xt_xml';
 		CONST USER_CAP    = 'manage_options';
 		CONST OPTIONS_STR = 'exact_target_xml';
+		CONST ERROR_STR   = 'xt_xml_errors';
+		CONST TRANSIENT_1 = 'foauhvahuhrrr';
 
 		private $options = array();
 		private $hook_suffix = '';
@@ -20,6 +22,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 			add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 			add_action( 'admin_init', array( $this, 'menu_page_init' ) );
+			add_action( 'admin_notices', array($this, 'add_errors') );
 		}
 
 		/**
@@ -46,10 +49,6 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 			// Add sections to settings page.
 			$this->add_sections();
-
-			// Show Errors
-			$this->add_errors();
-			add_action( 'admin_notices', array($this, 'your_admin_notices_action') );
 		}
 
 		/**
@@ -82,7 +81,11 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				'Image Size 1', // Title
 				array( $this, 'tag1_size_callback' ), // Callback
 				'basic', // Page
-				'basic_settings' // Section
+				'basic_settings', // Section
+				array(
+					'id' => '',
+					'title' => '',
+				)
 			);
 
 			add_settings_field(
@@ -90,7 +93,11 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				'Tag Name (1)', // Title
 				array( $this, 'tag1_name_callback' ), // Callback
 				'basic', // Page
-				'basic_settings' // Section
+				'basic_settings', // Section
+				array(
+					'id' => '',
+					'title' => '',
+				) // Section
 			);
 
 			add_settings_field(
@@ -98,7 +105,11 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				'Image Size 2', // Title
 				array( $this, 'tag2_size_callback' ), // Callback
 				'basic', // Page
-				'basic_settings' // Section
+				'basic_settings', // Section
+				array(
+					'id' => '',
+					'title' => '',
+				) // Section
 			);
 
 			add_settings_field(
@@ -106,16 +117,17 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				'Tag Name (2)',                      // Title
 				array( $this, 'tag2_name_callback' ), // Callback
 				'basic', // Page
-				'basic_settings' // Section
+				'basic_settings', // Section
+				array(
+					'id' => '',
+					'title' => '',
+				) // Section
 			);
 		}
 
 		public function add_errors() {
 
-
-			function your_admin_notices_action() {
-				settings_errors( 'your-settings-error-slug' );
-			}
+			settings_errors( self::ERROR_STR );
 
 		}
 		/**
@@ -131,12 +143,18 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 				<h1><?php echo self::PAGE_TITLE; ?></h1>
 
+				<h2>Options</h2>
 				<?php var_dump( $this->options ); ?>
+
+				<h2>Transients</h2>
+				<?php var_dump( get_transient(self::TRANSIENT_1) ); ?>
+				<?php var_dump( delete_transient(self::TRANSIENT_1) ); ?>
 
 				<form method="post" action="options.php">
 
 					<div class="postbox ">
 						<div class="inside">
+
 							<?php settings_fields( self::OPTIONS_STR . '-group' ); ?>
 
 							<?php do_settings_sections( 'basic' ); ?>
@@ -161,10 +179,15 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		public function options_validate( $input ) {
 			$new_input = array();
 
+			set_transient(self::TRANSIENT_1, $input, 60);
+
+			$new_input['tag1_size'] = wp_filter_nohtml_kses($input['tag1_size']);
+			$new_input['tag1_name'] = wp_filter_nohtml_kses($input['tag1_name']);
+			$new_input['tag2_size'] = wp_filter_nohtml_kses($input['tag2_size']);
+			$new_input['tag2_name'] = wp_filter_nohtml_kses($input['tag2_name']);
+
 			foreach ( $input as $key => $value ) {
-
 				$new_input[$key] = wp_filter_nohtml_kses( $value );
-
 			}
 
 			return $new_input;
@@ -179,25 +202,12 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		<?php
 		}
 
-		public function tag1_name_callback() {
-			$tag_name = 'tag1_name';
-			?>
-			<label for="xtxml_settings[<?php echo $tag_name; ?>]; ?>_name]">
-				<input type="text" name="xtxml_settings[<?php echo $tag_name; ?>]"
-				       value="<?php echo $this->options[$tag_name]; ?>"/>
-			</label>
-			<p>
-				Tag to associate with image size.
-			</p>
-		<?php
-		}
-
 		public function tag1_size_callback() {
 			$tag_number = 'tag1_size';
 			?>
-			<label for="xtxml_settings[<?php echo $tag_number; ?>]">
-				<input type="text" name="xtxml_settings[<?php echo $tag_number; ?>]"
-				       value="<?php echo $this->options[$tag_number]; ?>"/>
+			<label for="xtxml_settings[]">
+				<input type="text" name="xtxml_settings[]"
+				       value="<?php echo $this->input_field_value($this->options[$tag_number]); ?>"/>
 			</label>
 			<p>
 				Provide Tag Size: Example <kbd>200x133</kbd>
@@ -205,12 +215,12 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		<?php
 		}
 
-		public function tag2_name_callback() {
-			$tag_name = 'tag2_name';
+		public function tag1_name_callback() {
+			$tag_name = 'tag1_name';
 			?>
 			<label for="xtxml_settings[<?php echo $tag_name; ?>]; ?>_name]">
 				<input type="text" name="xtxml_settings[<?php echo $tag_name; ?>]"
-				       value="<?php echo $this->options[$tag_name]; ?>"/>
+				       value="<?php echo $this->input_field_value($this->options[$tag_name]); ?>"/>
 			</label>
 			<p>
 				Tag to associate with image size.
@@ -223,7 +233,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 			?>
 			<label for="xtxml_settings[<?php echo $tag_number; ?>]">
 				<input type="text" name="xtxml_settings[<?php echo $tag_number; ?>]"
-				       value="<?php echo $this->options[$tag_number]; ?>"/>
+				       value="<?php echo $this->input_field_value($this->options[$tag_number]); ?>"/>
 			</label>
 			<p>
 				Provide Tag Size: Example <kbd>200x133</kbd>
@@ -231,43 +241,24 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		<?php
 		}
 
-		private function notices() {
-			$message = null;
-			$type = null;
-
-			if ( null != $data ) {
-
-				if ( false === get_option( 'myOption' ) ) {
-
-					add_option( 'myOption', $data );
-					$type = 'updated';
-					$message = __( 'Successfully saved', 'my-text-domain' );
-
-				} else {
-
-					update_option( 'myOption', $data );
-					$type = 'updated';
-					$message = __( 'Successfully updated', 'my-text-domain' );
-
-				}
-
-			} else {
-
-				$type = 'error';
-				$message = __( 'Data can not be empty', 'my-text-domain' );
-
-			}
-
-			add_settings_error(
-				'myUniqueIdentifyer',
-				esc_attr( 'settings_updated' ),
-				$message,
-				$type
-			);
-
+		public function tag2_name_callback() {
+			$tag_name = 'tag2_name';
+			?>
+			<label for="xtxml_settings[<?php echo $tag_name; ?>]; ?>_name]">
+				<input type="text" name="xtxml_settings[<?php echo $tag_name; ?>]"
+				       value="<?php echo $this->input_field_value($this->options[$tag_name]); ?>"/>
+			</label>
+			<p>
+				Tag to associate with image size.
+			</p>
+		<?php
 		}
 
+		private function input_field_value($value) {
 
+			return ( isset( $value ) ? $value : '');
+
+		}
 	}
 
 }

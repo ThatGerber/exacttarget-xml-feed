@@ -1,12 +1,14 @@
 <?php
 /*
-Plugin Name: Exact Target XML Feed
-Plugin URI: http://www.github.com/thatgerber/
-Description: Custom XML Feed for Exact Target.
-Version: 0.1.0
-Author: Christopher Gerber
-Author URI: http://www.chriswgerber.com/
-License: GPL2
+Plugin Name:       Exact Target XML Feed
+Description:       Custom XML Feed for Exact Target.
+Author:            Christopher Gerber
+Version:           0.1.0
+Plugin URI:        http://www.github.com/ThatGerber/exacttarget-xml-feed
+Github Plugin URI: ThatGerber/exacttarget-xml-feed
+GitHub Branch:     master
+Author URI:        http://www.chriswgerber.com/
+License:           GPL2
 */
 
 /*  Copyright 2014 Christopher Gerber (email : chriswgerber@gmail.com)
