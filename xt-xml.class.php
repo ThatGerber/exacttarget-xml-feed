@@ -31,14 +31,15 @@ class XT_XML {
 	}
 
 	static function get_feed_image( $post ) {
-
-		if ( array_search( 'Featured', wp_get_post_tags( $post->ID, array( 'fields' => 'names' ) )) !== false ) {
+		if (
+			array_search( 'Featured', wp_get_post_tags($post->ID, array( 'fields' => 'names' )) ) !== false
+		) {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'featured-email-thumb' );
 		} else {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'email-thumb' );
 		}
-		return $image[0];
 
+		return $image[0];
 	}
 
 }
