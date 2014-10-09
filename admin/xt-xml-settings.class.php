@@ -120,13 +120,8 @@ class XT_XML_Settings {
 			$this->new_error('The input is blank', 'error');
 		}
 
-		$new_input['tag1_size'] = wp_filter_nohtml_kses($input['tag1_size']);
-		$new_input['tag1_name'] = wp_filter_nohtml_kses($input['tag1_name']);
-		$new_input['tag2_size'] = wp_filter_nohtml_kses($input['tag2_size']);
-		$new_input['tag2_name'] = wp_filter_nohtml_kses($input['tag2_name']);
-
 		foreach ( $input as $key => $value ) {
-			$new_input[$key] = wp_filter_nohtml_kses( $value );
+			$new_input[$key] = wp_filter_nohtml_kses($value);
 		}
 		set_transient('epg_validate_new-input_data', $new_input, 60);
 
@@ -171,9 +166,9 @@ class XT_XML_Settings {
 
 	public function basic_input_callback( $args ) {
 		?>
-		<label for="<?php echo $args['id']; ?>">
+		<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>]">
 			<input type="<?php echo $args['field']; ?>"
-			       name="<?php echo $args['id']; ?>"
+			       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>]"
 			       value="<?php echo $this->input_field_value($args['id']) ?>" />
 		</label>
 		<p>

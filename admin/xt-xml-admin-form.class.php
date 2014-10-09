@@ -29,7 +29,7 @@ class XT_XML_Admin_Form {
 	public function admin_form() {
 		?>
 		<div class="wrap">
-			<h1><?php echo XT_XML_Admin::PAGE_TITLE; ?></h1>
+			<h2><?php echo XT_XML_Admin::PAGE_TITLE; ?></h2>
 			<form method="post" action="options.php">
 				<div class="postbox ">
 					<div class="inside">
@@ -41,7 +41,7 @@ class XT_XML_Admin_Form {
 			</form>
 		</div>
 
-		<?php $this->debug_data(); ?>
+		<!--<?php $this->debug_data(); ?> -->
 	<?php
 	}
 
