@@ -3,8 +3,6 @@
 if ( ! class_exists( 'XT_XML_Admin_Form' ) ) {
 
 class XT_XML_Admin_Form {
-	CONST TRANSIENT_1 = 'foauhvahuhrrr';
-	CONST TRANSIENT_2 = 'foaasdfadggguhrrr';
 
 	protected static $instance;
 
@@ -52,11 +50,11 @@ class XT_XML_Admin_Form {
 		<?php var_dump( $this->settings ); ?>
 		<h2>Transients</h2>
 		<p>input</p>
-		<?php var_dump( get_transient(self::TRANSIENT_1) ); ?>
+		<?php var_dump( get_transient('epg_validate_input_data') ); ?>
 		<p>new_input</p>
-		<?php var_dump( get_transient(self::TRANSIENT_2) );
-		delete_transient(self::TRANSIENT_1);
-		delete_transient(self::TRANSIENT_2);
+		<?php var_dump( get_transient('epg_validate_new-input_data') );
+		delete_transient('epg_validate_input_data');
+		delete_transient('epg_validate_new-input_data');
 	}
 
 }

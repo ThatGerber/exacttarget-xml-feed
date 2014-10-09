@@ -7,8 +7,6 @@ class XT_XML_Settings {
 	CONST OPTIONS_STR = 'exact_target_xml';
 	CONST OPTIONS_GRP = 'exact_target_xml-group';
 	CONST FIELDS_STR  = 'exact_target_xml_fields';
-	CONST TRANSIENT_1 = 'foauhvahuhrrr';
-	CONST TRANSIENT_2 = 'foaasdfadggguhrrr';
 
 	/** @var array $options Array of options values */
 	private $options = array();
@@ -116,12 +114,10 @@ class XT_XML_Settings {
 	public function options_validate( $input ) {
 		$new_input = array();
 
-		set_transient(self::TRANSIENT_1, $input, 60);
+		set_transient( 'epg_validate_input_data', $input, 60);
 
 		if ($input === null ) {
 			$this->new_error('The input is blank', 'error');
-
-			return $new_input;
 		}
 
 		$new_input['tag1_size'] = wp_filter_nohtml_kses($input['tag1_size']);
@@ -132,7 +128,7 @@ class XT_XML_Settings {
 		foreach ( $input as $key => $value ) {
 			$new_input[$key] = wp_filter_nohtml_kses( $value );
 		}
-		set_transient(self::TRANSIENT_2, $new_input, 60);
+		set_transient('epg_validate_new-input_data', $new_input, 60);
 
 		return $new_input;
 	}
