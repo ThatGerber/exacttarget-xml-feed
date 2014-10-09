@@ -16,11 +16,7 @@ class XT_XML_Admin_Form {
 
 
 	public function __construct() {
-
-		$this->settings = new XT_XML_Settings;
-
 		$this->admin_form();
-
 	}
 
 	/**
@@ -30,33 +26,28 @@ class XT_XML_Admin_Form {
 		?>
 		<div class="wrap">
 			<h2><?php echo XT_XML_Admin::PAGE_TITLE; ?></h2>
-			<form method="post" action="options.php">
-				<div class="postbox ">
-					<div class="inside">
+			<div class="postbox ">
+				<div class="inside">
+					<p>
+						This plugin allows you to set image sizes for an XML feed used by Exact Target.
+					</p>
+					<p>
+						To set the image size, choose a tag to associate with that size.
+					</p>
+					<!-- Add New tag -->
+					<form method="post" action="">
+						<?php submit_button( 'Add New Tag' ); ?>
+					</form>
+					<form method="post" action="options.php">
 						<?php settings_fields( XT_XML_Settings::OPTIONS_GRP ); ?>
 						<?php do_settings_sections( XT_XML_Admin::PLUGIN_SLUG ); ?>
 						<?php submit_button( ); ?>
-					</div>
+					</form>
 				</div>
-			</form>
+			</div>
 		</div>
-
-		<!--<?php $this->debug_data(); ?> -->
 	<?php
 	}
-
-	private function debug_data() {
-		?><h2>Options</h2>
-		<?php var_dump( $this->settings ); ?>
-		<h2>Transients</h2>
-		<p>input</p>
-		<?php var_dump( get_transient('epg_validate_input_data') ); ?>
-		<p>new_input</p>
-		<?php var_dump( get_transient('epg_validate_new-input_data') );
-		delete_transient('epg_validate_input_data');
-		delete_transient('epg_validate_new-input_data');
-	}
-
 }
 
 }

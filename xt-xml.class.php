@@ -27,7 +27,7 @@ class XT_XML {
 
 	static function feed_image( $post ) {
 
-		echo XT_XML::get_feed_image($post);
+		echo XT_XML::get_feed_image( $post );
 	}
 
 	static function get_feed_image( $post ) {

@@ -89,7 +89,7 @@ class XT_XML_Settings {
 		/** Basic Settings */
 		add_settings_section(
 			'basic_settings', // ID
-			'Settings', // Title
+			'Tags', // Title
 			array( $this, 'basic_section_callback' ), // Callback
 			XT_XML_Admin::PLUGIN_SLUG // Page
 		);
@@ -155,12 +155,6 @@ class XT_XML_Settings {
 	 */
 	public function basic_section_callback() {
 		?>
-		<p>
-			This plugin allows you to set image sizes for an XML feed used by Exact Target.
-		</p>
-		<p>
-			To set the image size, choose a tag to associate with that size.
-		</p>
 	<?php
 	}
 
