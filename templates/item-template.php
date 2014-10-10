@@ -12,7 +12,7 @@
 	</image>
 	<description>
 		<![CDATA[
-		<?php echo get_the_content_feed('rss2'); ?>
+		<?php XT_XML::the_description( $post->post_content, 200 ); ?>
 		]]>
 	</description>
 	<?php rss_enclosure(); ?>

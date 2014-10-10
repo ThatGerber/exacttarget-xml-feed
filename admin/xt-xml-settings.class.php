@@ -11,6 +11,13 @@ class XT_XML_Settings {
 	/** @var array $options Array of options values */
 	private $options = array();
 
+	protected $sections = array(
+		array(
+			'id'    => 'basic_settings',
+			'title' => 'Tags',
+		)
+	);
+
 	protected $fields = array(
 		array(
 			'id'          => 'tag1_size',
@@ -82,29 +89,6 @@ class XT_XML_Settings {
 	}
 
 	/**
-	 * Create form for plugin settings.
-	 */
-	public function add_sections() {
-
-		/** Basic Settings */
-		add_settings_section(
-			'basic_settings', // ID
-			'Tags', // Title
-			array( $this, 'basic_section_callback' ), // Callback
-			XT_XML_Admin::PLUGIN_SLUG // Page
-		);
-
-		foreach ( $this->fields as $setting ) {
-			$this->create_settings_field($setting);
-		}
-	}
-
-	public function add_errors() {
-		settings_errors( self::OPTIONS_STR );
-	}
-
-
-	/**
 	 * Sanitize and validate input. Accepts an array, return a sanitized array.
 	 *
 	 * @param array $input
@@ -116,16 +100,51 @@ class XT_XML_Settings {
 
 		set_transient( 'epg_validate_input_data', $input, 60);
 
-		if ($input === null ) {
-			$this->new_error('The input is blank', 'error');
-		}
-
 		foreach ( $input as $key => $value ) {
+			if ($value === '') {
+				$this->new_error($key . ' is blank. Please include a value.', 'error');
+			}
 			$new_input[$key] = wp_filter_nohtml_kses($value);
 		}
 		set_transient('epg_validate_new-input_data', $new_input, 60);
 
 		return $new_input;
+	}
+
+	/**
+	 * Create form for plugin settings.
+	 */
+	public function add_sections() {
+
+		foreach ( $this->sections as $section ) {
+			$this->create_settings_section($section);
+		}
+
+		foreach ( $this->fields as $setting ) {
+			$this->create_settings_field($setting);
+		}
+	}
+
+	public function add_errors() {
+		settings_errors( self::OPTIONS_STR );
+	}
+
+
+
+	/**
+	 * @param array $settings
+	 *      ID = input ID,
+	 *      Title = Name of field,
+	 *      Field = Type of field,
+	 *      Description = Description below field
+	 */
+	protected function create_settings_section( $section ) {
+		add_settings_section(
+			$section['id'], //    'basic_settings', // ID
+			$section['title'], // 'Tags', // Title
+			array( $this, 'basic_section_callback' ), // Callback
+			XT_XML_Admin::PLUGIN_SLUG // Page
+		); // Args
 	}
 
 	/**
@@ -154,8 +173,7 @@ class XT_XML_Settings {
 	 * Basic section callback. Creates the settings header.
 	 */
 	public function basic_section_callback() {
-		?>
-	<?php
+		echo '';
 	}
 
 	public function basic_input_callback( $args ) {

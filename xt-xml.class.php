@@ -32,7 +32,7 @@ class XT_XML {
 
 	static function get_feed_image( $post ) {
 		if (
-			array_search( 'Featured', wp_get_post_tags($post->ID, array( 'fields' => 'names' )) ) !== false
+			array_search( 'Featured Articles', wp_get_post_tags($post->ID, array( 'fields' => 'names' )) ) !== false
 		) {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'featured-email-thumb' );
 		} else {
@@ -41,6 +41,17 @@ class XT_XML {
 
 		return $image[0];
 	}
+
+	static function the_description( $str, $limit = 30 ) {
+
+		echo XT_XML::get_the_description( $str, $limit );
+	}
+
+	static function get_the_description( $str, $limit = 30 ) {
+
+		return trim( implode( ' ', array_slice( explode( ' ', strip_tags( $str ) ), 0, $limit ) ) );
+	}
+
 
 }
 
