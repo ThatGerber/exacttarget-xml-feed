@@ -34,6 +34,7 @@ class XT_XML_Admin_Form {
 					<p>
 						To set the image size, choose a tag to associate with that size.
 					</p>
+					<?php get_transient('epg_validate_input_data'); ?>
 					<form method="post" action="options.php">
 						<?php submit_button( ); ?>
 						<?php settings_fields( XT_XML_Admin::OPTIONS_GRP ); ?>

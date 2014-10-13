@@ -83,7 +83,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 			$this->fields[] = new XT_XML_Tag($name);
 
-			return update_option(self::OPTIONS_STR, $this->fields);
+			return xt_update_option(self::OPTIONS_STR, $this->fields);
 
 		}
 
@@ -108,8 +108,10 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				$this->create_settings_section($section);
 			}
 
-			foreach ( $this->fields as $setting ) {
-				$this->create_settings_field($setting);
+			if ($this->fields) {
+				foreach ( $this->fields as $setting ) {
+					$this->create_settings_field($setting);
+				}
 			}
 		}
 
@@ -179,6 +181,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 		public function basic_input_callback( $args ) {
 			$args = $args[0];
+			var_dump($args);
 			?>
 			<div>
 				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>]">
