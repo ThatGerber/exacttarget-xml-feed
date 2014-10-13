@@ -15,8 +15,6 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		CONST OPTIONS_GRP = 'exact_target_xml-group';
 		CONST FIELDS_STR  = 'exact_target_xml_fields';
 
-		protected $settings;
-
 		/** @var array $options Array of options values */
 		private $options = array();
 
@@ -27,58 +25,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 			)
 		);
 
-		protected $fields = array(
-			array(
-				'id'          => 'tag_name_1',
-				'tag'         => 'Tag Name 1',
-				'image_size'  => array(125, 90),
-				'feed_count'  => 5,
-				'word_count'  => 200,
-				'field'       => 'text',
-				'description' => 'Enter size of tag. Example: <kbd>200x133</kbd>',
-				'section'     => 'basic_settings',
-			),
-			array(
-				'id'          => 'tag_name_2',
-				'tag'         => 'Tag Name 2',
-				'image_size'  => array(125, 90),
-				'feed_count'  => 5,
-				'word_count'  => 200,
-				'field'       => 'text',
-				'description' => 'Enter the tag to be associated with this size.',
-				'section'     => 'basic_settings',
-			),
-			array(
-				'id'          => 'tag_name_3',
-				'tag'         => 'Tag Name 3',
-				'image_size'  => array(125, 90),
-				'feed_count'  => 5,
-				'word_count'  => 200,
-				'field'       => 'text',
-				'description' => 'Enter size of tag. Example: <kbd>200x133</kbd>',
-				'section'     => 'basic_settings',
-			),
-			array(
-				'id'          => 'tag_name_4',
-				'tag'         => 'Tag Name 4',
-				'image_size'  => array(125, 90),
-				'feed_count'  => 5,
-				'word_count'  => 200,
-				'field'       => 'text',
-				'description' => 'Enter the tag to be associated with this size.',
-				'section'     => 'basic_settings',
-			),
-			array(
-				'id'          => 'tag_name_5',
-				'tag'         => 'Tag Name 5',
-				'image_size'  => array(125, 90),
-				'feed_count'  => 5,
-				'word_count'  => 200,
-				'field'       => 'text',
-				'description' => 'Enter size of tag. Example: <kbd>200x133</kbd>',
-				'section'     => 'basic_settings',
-
-			)
+		public $fields = array(
 		);
 
 		/** @var string $hook_suffix Created by page registration */
@@ -86,6 +33,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 		public function __construct() {
 
+			require_once( 'xt-xml-tag.class.php');
 			require_once( 'xt-xml-settings.class.php');
 			require_once( 'xt-xml-admin-form.class.php');
 
@@ -117,23 +65,25 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 			// Register settings
 			$this->register_settings();
 			// Creates the settings var to be referred to
-			$this->options = get_option( self::OPTIONS_STR );
-			// Add sections to settings page.
-			$this->add_sections();
+			$this->fields = get_option( self::OPTIONS_STR );
 
 			if ( isset( $_POST['submit'] ) && $_POST['submit'] === 'Add New Tag' ) {
 				$this->add_new_tag( $_POST['new_tag'] );
 			}
+			// Add sections to settings page.
+			$this->add_sections();
 
 			// Errors
 			add_action( 'admin_notices', array($this, 'add_errors') );
 
-
-			$this->settings = '';
-
 		}
 
 		protected function add_new_tag( $name ) {
+			$this->fields = get_option( self::OPTIONS_STR );
+
+			$this->fields[] = new XT_XML_Tag($name);
+
+			return update_option(self::OPTIONS_STR, $this->fields);
 
 		}
 
@@ -164,19 +114,6 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		}
 
 		/**
-		 * Add Settings Field
-		 *
-		 * @param string $id
-		 */
-		public function add_settings_field( $id ) {
-
-			$this->fields[] =  array(
-				'id' => $id
-			);
-
-		}
-
-		/**
 		 * Sanitize and validate input. Accepts an array, return a sanitized array.
 		 *
 		 * @param array $input
@@ -188,25 +125,23 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 			set_transient( 'epg_validate_input_data', $input, 60);
 
-			foreach ( $input as $key => $value ) {
-				if ($value === '') {
-					$this->new_error($key . ' is blank. Please include a value.', 'error');
-				}
-				$new_input[$key] = wp_filter_nohtml_kses($value);
-			}
 			set_transient('epg_validate_new-input_data', $new_input, 60);
 
-			return $new_input;
+			return $input;
 		}
 
+		/**
+		 * Queue up the errors
+		 */
 		public function add_errors() {
 			settings_errors( self::OPTIONS_STR );
 		}
 
 		/**
 		 * @param array $settings
-		 *      ID = input ID,
-		 *      Title = Name of field,
+		 *
+		 *              ID = input ID,
+		 *              Title = Name of field,
 		 */
 		protected function create_settings_section( $section ) {
 			add_settings_section(
@@ -218,7 +153,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		}
 
 		/**
-		 * @param array $settings
+		 * @param object $settings
 		 *              ID = input ID,
 		 *              Title = Name of field,
 		 *              Field = Type of field,
@@ -226,16 +161,12 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		 */
 		protected function create_settings_field( $settings ) {
 			add_settings_field(
-				$settings['id'], // ID
-				$settings['tag'], // Title
+				$settings->id, // ID
+				$settings->tag, // Title
 				array( $this, 'basic_input_callback' ), // Callback
 				XT_XML_Admin::PLUGIN_SLUG, // Page
-				$settings['section'], // Section
-				array(
-					'id'          => $settings['id'],
-					'field'       => $settings['field'],
-					'description' => $settings['description']
-				) // Args
+				$settings->section, // Section
+				array($settings) // Args
 			);
 		}
 
@@ -247,40 +178,30 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		}
 
 		public function basic_input_callback( $args ) {
-
-			$args = array(
-				'id'          => 'tag_name_1',
-				'tag'         => 'Tag Name 1',
-				'image_size'  => array(125, 90),
-				'feed_count'  => 5,
-				'word_count'  => 200,
-				'field'       => 'text',
-				'description' => 'Enter size of tag. Example: <kbd>200x133</kbd>',
-				'section'     => 'basic_settings',
-			);
+			$args = $args[0];
 			?>
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>]">
+				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>]">
 					Image Size:&nbsp;&nbsp;&nbsp;
-					<input type="<?php echo $args['field']; ?>"
-					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>][image_size]"
-					       value="<?php echo $this->image_size_field( $args['image_size']) ?>" />
+					<input type="<?php echo $args->field; ?>"
+					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][image_size]"
+					       value="<?php echo $this->image_size_field( $args->image_size) ?>" />
 				</label>
 			</div>
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>]">
+				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>]">
 					Word Count:&nbsp;
-					<input type="<?php echo $args['field']; ?>"
-					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>][word_count]"
-					       value="<?php echo $this->input_field_value($args['word_count']) ?>" />
+					<input type="<?php echo $args->field; ?>"
+					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][word_count]"
+					       value="<?php echo $this->input_field_value($args->word_count) ?>" />
 				</label>
 			</div>
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>][feed_count]">
+				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][feed_count]">
 					Feed Count: &nbsp;
-					<input type="<?php echo $args['field']; ?>"
-					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args['id']; ?>]"
-					       value="<?php echo $this->input_field_value($args['feed_count']) ?>" />
+					<input type="<?php echo $args->field; ?>"
+					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>]"
+					       value="<?php echo $this->input_field_value($args->feed_count) ?>" />
 				</label>
 			</div>
 		<?php
