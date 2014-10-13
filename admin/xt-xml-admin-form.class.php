@@ -34,18 +34,22 @@ class XT_XML_Admin_Form {
 					<p>
 						To set the image size, choose a tag to associate with that size.
 					</p>
+					<form method="post" action="options.php">
+						<?php submit_button( ); ?>
+						<?php settings_fields( XT_XML_Admin::OPTIONS_GRP ); ?>
+						<?php do_settings_sections( XT_XML_Admin::PLUGIN_SLUG ); ?>
+					</form>
 					<!-- Add New tag -->
 					<form method="post" action="">
-						<?php submit_button( 'Add New Tag' ); ?>
-					</form>
-					<form method="post" action="options.php">
-						<?php settings_fields( XT_XML_Settings::OPTIONS_GRP ); ?>
-						<?php do_settings_sections( XT_XML_Admin::PLUGIN_SLUG ); ?>
-						<?php submit_button( ); ?>
+						<p class="submit" style="display:inline-block;">
+							Name: <br /><input type="text" value="" name="new_tag" />
+							<input type="submit" name="submit" id="submit" class="button button-primary" value="Add New Tag">
+						</p>
 					</form>
 				</div>
 			</div>
 		</div>
+		<?php print_r($_POST); ?>
 	<?php
 	}
 }

@@ -34,8 +34,6 @@ include( 'xt-xml.class.php' );
 new XT_XML;
 
 if ( is_admin() ) {
-
 	include( 'admin/xt-xml-admin.class.php');
 	new XT_XML_Admin;
-
 }
