@@ -8,14 +8,16 @@ $more = 1;
 
 echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 
-<root>
 
+<rss>
 	<language><?php bloginfo_rss( 'language' ); ?></language>
+	<channel>
 
-	<?php while( have_posts()) : the_post();
+		<?php while( have_posts()) : the_post();
 
-		include('item-template.php');
+			include('item-template.php');
 
-	endwhile; ?>
+		endwhile; ?>
 
-</root>
+	</channel>
+</rss>

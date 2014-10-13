@@ -1,4 +1,5 @@
 <item>
+	<?php rss_enclosure(); ?>
 	<title>
 		<?php the_title_rss() ?>
 	</title>
@@ -15,6 +16,5 @@
 		<?php XT_XML::the_description( $post->post_content, 200 ); ?>
 		]]>
 	</description>
-	<?php rss_enclosure(); ?>
 	<?php do_action('rss2_item'); ?>
 </item>
