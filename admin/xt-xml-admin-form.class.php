@@ -15,7 +15,7 @@ class XT_XML_Admin_Form {
 	}
 
 
-	public function __construct() {
+	protected function __construct() {
 		$this->admin_form();
 	}
 
@@ -33,12 +33,13 @@ class XT_XML_Admin_Form {
 					</p>
 					<p>
 						To set the image size, choose a tag to associate with that size.
+						<strong>Please note: After changing the image size, you will need to
+						regenerate thumbnails to apply changes to older images.</strong>
 					</p>
-					<?php get_transient('epg_validate_input_data'); ?>
 					<form method="post" action="options.php">
-						<?php submit_button( ); ?>
 						<?php settings_fields( XT_XML_Admin::OPTIONS_GRP ); ?>
 						<?php do_settings_sections( XT_XML_Admin::PLUGIN_SLUG ); ?>
+						<?php submit_button( ); ?>
 					</form>
 					<!-- Add New tag -->
 					<form method="post" action="">
@@ -50,7 +51,6 @@ class XT_XML_Admin_Form {
 				</div>
 			</div>
 		</div>
-		<?php print_r($_POST); ?>
 	<?php
 	}
 }

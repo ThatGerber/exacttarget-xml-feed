@@ -31,9 +31,9 @@ License:           GPL2
 
 
 include( 'xt-xml.class.php' );
-new XT_XML;
+$xt_xml = new XT_XML;
 
 if ( is_admin() ) {
 	include( 'admin/xt-xml-admin.class.php');
-	new XT_XML_Admin;
+	$xt_xml_admin = new XT_XML_Admin;
 }

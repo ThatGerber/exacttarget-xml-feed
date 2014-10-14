@@ -79,12 +79,23 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		}
 
 		protected function add_new_tag( $name ) {
-			$this->fields = get_option( self::OPTIONS_STR );
 
-			$this->fields[] = new XT_XML_Tag($name);
+			$this->fields = get_option( self::OPTIONS_STR );
+			$field_names  = array();
+
+			if ( ! empty( $this->fields ) ) {
+				foreach ( $this->fields as $field ) {
+					$field_names[] = $field->id;
+				}
+			}
+
+			if (
+				false === array_search( xt_field_name_slugify( $name ), $field_names )
+			) {
+				$this->fields[] = new XT_XML_Tag($name);
+			}
 
 			return xt_update_option(self::OPTIONS_STR, $this->fields);
-
 		}
 
 		/**
@@ -123,13 +134,24 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		 * @return array $new_input
 		 */
 		public function options_validate( $input ) {
-			$new_input = array();
 
-			set_transient( 'epg_validate_input_data', $input, 60);
+			if ( is_a( $input[0], 'XT_XML_Tag' ) ) {
 
-			set_transient('epg_validate_new-input_data', $new_input, 60);
+				return $input;
+			} elseif ( is_array( $input ) ) {
+				foreach ( $input as $key => $value ) {
+					if (
+						( $field = xt_get_field($this->fields, $key) ) !== null
+					) {
+						$field->update_image_size( $value['image_size'] );
+						$field->update_feed_count( $value['feed_count'] );
+						$field->update_word_count( $value['word_count'] );
+					}
+				}
+			}
+			set_transient( 'epg_validate_input_data', $this->fields, 60);
 
-			return $input;
+			return $this->fields;
 		}
 
 		/**
@@ -181,10 +203,12 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 		public function basic_input_callback( $args ) {
 			$args = $args[0];
-			var_dump($args);
 			?>
+			<input type="hidden"
+			       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][tag_name]"
+			       value="<?php echo $args->tag; ?>" />
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>]">
+				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][image_size]">
 					Image Size:&nbsp;&nbsp;&nbsp;
 					<input type="<?php echo $args->field; ?>"
 					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][image_size]"
@@ -192,7 +216,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				</label>
 			</div>
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>]">
+				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][word_count]">
 					Word Count:&nbsp;
 					<input type="<?php echo $args->field; ?>"
 					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][word_count]"
@@ -203,7 +227,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][feed_count]">
 					Feed Count: &nbsp;
 					<input type="<?php echo $args->field; ?>"
-					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>]"
+					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][feed_count]"
 					       value="<?php echo $this->input_field_value($args->feed_count) ?>" />
 				</label>
 			</div>
