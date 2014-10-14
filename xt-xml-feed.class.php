@@ -44,7 +44,7 @@ class XT_XML_Feed {
 
 		header('Content-Type: application/xml; charset=UTF-8', true);
 
-		xt_get_template_part('feed-header', 'xml');
+		xt_get_template_part('feed-header');
 
 		while( have_posts() ) {
 			the_post();
