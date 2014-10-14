@@ -117,8 +117,8 @@ class XT_XML_Feed {
 
 		$limit = xt_get_word_count();
 
-		return trim( implode( ' ', array_slice( explode( ' ', get_the_content_feed($str) ), 0, $limit ) ) );
-		//return trim( implode( ' ', array_slice( explode( ' ', strip_tags( $str ) ), 0, $limit ) ) );
+		//return trim( implode( ' ', array_slice( explode( ' ', get_the_content_feed($str) ), 0, $limit ) ) );
+		return trim( implode( ' ', array_slice( explode( ' ', strip_tags( $str ) ), 0, $limit ) ) );
 	}
 
 }
