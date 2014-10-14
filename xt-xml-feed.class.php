@@ -81,6 +81,10 @@ class XT_XML_Feed {
 	 */
 	static function get_feed_image( $post, $size = 'thumbnail' ) {
 
+		if ( xt_get_field( get_option(XT_XML_Admin::OPTIONS_STR), $size ) == null ) {
+			$size = 'thumbnail';
+		}
+
 		if ( $size !== 'thumbnail' ) {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), $size . '-thumb' );
 		} else {
