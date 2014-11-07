@@ -14,7 +14,7 @@
 	</image>
 	<description>
 		<![CDATA[
-			<?php XT_XML_Feed::the_description( $post->post_content ); ?>
+			<?php XT_XML_Feed::the_description(); ?>
 		]]>
 	</description>
 	<?php do_action('rss2_item'); ?>

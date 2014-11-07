@@ -42,9 +42,9 @@ function xt_get_field( $fields = null, $name ) {
 		$fields = get_option(XT_XML_Admin::OPTIONS_STR);
 	}
 
-	foreach ( $fields as $field ) {
-		if ( $field->id == $name ) {
-			$retval = $field;
+	while ( $fields ) {
+		if ( $fields->id == $name ) {
+			$retval = $fields;
 		}
 	}
 

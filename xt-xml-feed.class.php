@@ -100,25 +100,10 @@ class XT_XML_Feed {
 	 * @param     $str
 	 * @param int $limit
 	 */
-	static function the_description( $str ) {
+	static function the_description( ) {
 
-		echo self::get_the_description( $str );
-	}
-
-	/**
-	 * Returns the description as a variable.
-	 *
-	 * @param     $str
-	 * @param int $limit
-	 *
-	 * @return string
-	 */
-	static function get_the_description( $str ) {
-
-		$limit = xt_get_word_count();
-
-		//return trim( implode( ' ', array_slice( explode( ' ', get_the_content_feed($str) ), 0, $limit ) ) );
-		return trim( implode( ' ', array_slice( explode( ' ', strip_tags( $str ) ), 0, $limit ) ) );
+		the_excerpt();
+		echo ' <a href="' . get_permalink() . '" target="_blank">Read more</a>';
 	}
 
 }
