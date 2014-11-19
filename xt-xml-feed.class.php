@@ -24,8 +24,9 @@ class XT_XML_Feed {
 	protected function __construct( ) {
 		static::$cat = xt_get_the_category();
 
-		$this->field = xt_get_field( get_option(XT_XML_Admin::OPTIONS_STR), static::$cat->slug );
-
+		if ( is_string( static::$cat ) ) {
+			$this->field = xt_get_field( get_option(XT_XML_Admin::OPTIONS_STR), static::$cat->slug );
+		}
 		$this->get_feed();
 	}
 
@@ -41,7 +42,6 @@ class XT_XML_Feed {
 		} else {
 			$limit = 10;
 		}
-
 		header('Content-Type: application/xml; charset=UTF-8', true);
 
 		xt_get_template_part('feed-header');
@@ -102,8 +102,7 @@ class XT_XML_Feed {
 	 */
 	static function the_description( ) {
 
-		the_excerpt();
-		echo ' <a href="' . get_permalink() . '" target="_blank">Read more</a>';
+		echo the_excerpt() . ' <a href="' . get_permalink() . '" target="_blank">Read more</a>';
 	}
 
 }
