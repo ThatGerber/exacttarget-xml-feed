@@ -22,11 +22,15 @@ class XT_XML_Feed {
 	}
 
 	protected function __construct( ) {
+
+		add_filter( 'excerpt_length', array($this, 'excerpt_length'), 999 );
+
 		static::$cat = xt_get_the_category();
 
-		if ( is_string( static::$cat ) ) {
+		if ( static::$cat ) {
 			$this->field = xt_get_field( get_option(XT_XML_Admin::OPTIONS_STR), static::$cat->slug );
 		}
+
 		$this->get_feed();
 	}
 
@@ -34,14 +38,10 @@ class XT_XML_Feed {
 	 * Instantiates the feed.
 	 */
 	public function get_feed() {
-
 		$count = 0;
 
-		if ( is_a( $this->field, 'XT_XML_Tag' ) ) {
-			$limit = $this->field->feed_count;
-		} else {
-			$limit = 10;
-		}
+		$limit = ( is_a( $this->field, 'XT_XML_Tag' ) ? $this->field->feed_count : 10 );
+
 		header('Content-Type: application/xml; charset=UTF-8', true);
 
 		xt_get_template_part('feed-header');
@@ -103,6 +103,18 @@ class XT_XML_Feed {
 	static function the_description( ) {
 
 		echo the_excerpt() . ' <a href="' . get_permalink() . '" target="_blank">Read more</a>';
+	}
+
+	/**
+	 * Edits the length of the excerpt.
+	 *
+	 * @param $length
+	 *
+	 * @return int
+	 */
+	public function excerpt_length( $length ) {
+
+		return xt_get_word_count();
 	}
 
 }

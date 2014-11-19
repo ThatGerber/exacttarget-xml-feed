@@ -55,7 +55,9 @@ function xt_get_field( $fields = null, $name ) {
 
 function xt_get_the_category() {
 
-	return get_category( get_query_var( 'cat' ) );
+	$cat = get_category( get_query_var( 'cat' ) );
+
+	return ( ! is_wp_error( $cat ) ? $cat : null);
 }
 
 function get_xt_get_template_part( $part, $ext = 'php' ) {
