@@ -102,7 +102,7 @@ class XT_XML_Feed {
 	 */
 	static function the_description( ) {
 
-		echo the_excerpt() . ' <a href="' . get_permalink() . '" target="_blank">Read more</a>';
+		the_excerpt();
 	}
 
 	/**
