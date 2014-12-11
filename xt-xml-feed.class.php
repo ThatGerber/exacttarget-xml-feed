@@ -24,6 +24,11 @@ class XT_XML_Feed {
 	protected function __construct( ) {
 
 		add_filter( 'excerpt_length', array($this, 'excerpt_length'), 999 );
+		// Let's get rid of stupid smart quotes
+		remove_filter( 'the_title_rss', 'wptexturize' );
+		remove_filter( 'the_content', 'wptexturize' );
+		remove_filter( 'comment_text', 'wptexturize' );
+		remove_filter( 'the_excerpt', 'wptexturize' );
 
 		static::$cat = xt_get_the_category();
 
