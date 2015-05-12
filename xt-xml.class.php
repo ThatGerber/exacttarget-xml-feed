@@ -13,29 +13,11 @@ class XT_XML {
 	 * Things to do on construct
 	 *
 	 */
-	public function __construct() {
-
-		/** Helper files */
-		$this->file_includes();
-
-		$this->tags = get_option( XT_XML_Admin::OPTIONS_STR );
-
-		// Adds XML feed
-		add_action( 'do_feed_xtxml', array('XT_XML_Feed', 'instance') );
-
-		// Adds image sizes
-		add_action( 'after_setup_theme', array( $this, 'add_image_sizes') );
+	public function __construct( $options_str ) {
+		$this->tags = get_option( $options_str );
 	}
 
 	private function file_includes() {
-		// Helper Functions
-		include('xt-xml.functions.php');
-		// Admin (stuff
-		include('admin/xt-xml-admin.class.php');
-		// Tags
-		include('admin/xt-xml-tag.class.php');
-		// Feed Class
-		include('xt-xml-feed.class.php');
 	}
 
 	/**
@@ -63,6 +45,41 @@ class XT_XML {
 		add_image_size( 'email-thumb', 125, 90, true ); //(cropped)
 	}
 
+	/**
+	 *
+	 */
+	public function register_taxonomy() {
+		// Register Custom Taxonomy
+		$labels = array(
+			'name'                       => 'Email Tags',
+			'singular_name'              => 'Email Tag',
+			'menu_name'                  => 'Email Tags',
+			'all_items'                  => 'All Tags',
+			'parent_item'                => 'Parent Tag',
+			'parent_item_colon'          => 'Parent Tag:',
+			'new_item_name'              => 'New Email Tag',
+			'add_new_item'               => 'Add New Tag',
+			'edit_item'                  => 'Edit Tag',
+			'update_item'                => 'Update Tag',
+			'view_item'                  => 'View Tag',
+			'separate_items_with_commas' => 'Separate Email Tags with commas',
+			'add_or_remove_items'        => 'Add or remove tags',
+			'choose_from_most_used'      => 'Choose from the most used',
+			'popular_items'              => 'Popular Tags',
+			'search_items'               => 'Search Tags',
+			'not_found'                  => 'Not Found',
+		);
+		$args = array(
+			'labels'                     => $labels,
+			'hierarchical'               => false,
+			'public'                     => true,
+			'show_ui'                    => true,
+			'show_admin_column'          => true,
+			'show_in_nav_menus'          => false,
+			'show_tagcloud'              => false,
+		);
+		register_taxonomy( 'email_tags', array( 'post' ), $args );
+	}
 }
 
 }

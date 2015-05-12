@@ -25,7 +25,7 @@ class XT_XML_Admin_Form {
 	public function admin_form() {
 		?>
 		<div class="wrap">
-			<h2><?php echo XT_XML_Admin::PAGE_TITLE; ?></h2>
+			<h2>Admin Form</h2>
 			<div class="postbox ">
 				<div class="inside">
 					<p>
@@ -37,8 +37,8 @@ class XT_XML_Admin_Form {
 						regenerate thumbnails to apply changes to older images.</strong>
 					</p>
 					<form method="post" action="options.php">
-						<?php settings_fields( XT_XML_Admin::OPTIONS_GRP ); ?>
-						<?php do_settings_sections( XT_XML_Admin::PLUGIN_SLUG ); ?>
+						<?php settings_fields( 'exact_target_xml' ); ?>
+						<?php do_settings_sections( 'xt_xml' ); ?>
 						<?php submit_button( ); ?>
 					</form>
 					<!-- Add New tag -->

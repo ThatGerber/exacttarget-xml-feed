@@ -7,13 +7,13 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 	class XT_XML_Admin {
 
-		CONST PAGE_TITLE  = 'Exact Target XML Pages';
-		CONST MENU_TITLE  = 'Exact Target XML';
-		CONST USER_CAP    = 'manage_options';
-		CONST PLUGIN_SLUG = 'xt_xml';
-		CONST OPTIONS_STR = 'exact_target_xml';
-		CONST OPTIONS_GRP = 'exact_target_xml-group';
-		CONST FIELDS_STR  = 'exact_target_xml_fields';
+		public $page_title;
+		public $menu_title;
+		public $user_cap;
+		public $plugin_slug;
+		public $options_str;
+		public $options_grp;
+		public $fields_str;
 
 		/** @var array $options Array of options values */
 		private $options = array();
@@ -31,14 +31,10 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		/** @var string $hook_suffix Created by page registration */
 		private $hook_suffix = '';
 
+		/**
+		 * PHP5 Constructor
+		 */
 		public function __construct() {
-
-			require_once( 'xt-xml-tag.class.php');
-			require_once( 'xt-xml-settings.class.php');
-			require_once( 'xt-xml-admin-form.class.php');
-
-			add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
-			add_action( 'admin_init', array( $this, 'menu_page_init' ) );
 
 		}
 
@@ -47,10 +43,10 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		 */
 		public function register_menu_page() {
 			$this->hook_suffix = add_options_page(
-				self::PAGE_TITLE,     // Page Title
-				self::MENU_TITLE,     // Menu Title
-				self::USER_CAP,       // Capability
-				self::PLUGIN_SLUG,    // Menu Slug
+				$this->page_title,  // Page Title
+				$this->menu_title,  // Menu Title
+				$this->user_cap,    // Capability
+				$this->plugin_slug, // Menu Slug
 				array( 'XT_XML_Admin_Form', 'instance' ) // Function
 			);
 		}
@@ -61,11 +57,10 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		 * Sets up the settings and calls the view.
 		 */
 		public function menu_page_init() {
-
 			// Register settings
 			$this->register_settings();
 			// Creates the settings var to be referred to
-			$this->fields = get_option( self::OPTIONS_STR );
+			$this->fields = get_option( $this->options_str );
 
 			if ( isset( $_POST['submit'] ) && $_POST['submit'] === 'Add New Tag' ) {
 				$this->add_new_tag( $_POST['new_tag'] );
@@ -80,7 +75,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 
 		protected function add_new_tag( $name ) {
 
-			$this->fields = get_option( self::OPTIONS_STR );
+			$this->fields = get_option( $this->options_str );
 			$field_names  = array();
 
 			if ( ! empty( $this->fields ) ) {
@@ -95,7 +90,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				$this->fields[] = new XT_XML_Tag($name);
 			}
 
-			return xt_update_option(self::OPTIONS_STR, $this->fields);
+			return xt_update_option( $this->options_str, $this->fields);
 		}
 
 		/**
@@ -104,8 +99,8 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		public function register_settings() {
 			// register our settings
 			register_setting(
-				self::OPTIONS_GRP,
-				self::OPTIONS_STR,
+				$this->options_grp,
+				$this->options_str,
 				array( $this, 'options_validate' )
 			);
 		}
@@ -158,7 +153,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		 * Queue up the errors
 		 */
 		public function add_errors() {
-			settings_errors( self::OPTIONS_STR );
+			settings_errors( $this->options_str );
 		}
 
 		/**
@@ -172,7 +167,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				$section['id'], //    'basic_settings', // ID
 				$section['title'], // 'Tags', // Title
 				array( $this, 'basic_section_callback' ), // Callback
-				XT_XML_Admin::PLUGIN_SLUG // Page
+				$this->plugin_slug // Page
 			); // Args
 		}
 
@@ -188,7 +183,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 				$settings->id, // ID
 				$settings->tag, // Title
 				array( $this, 'basic_input_callback' ), // Callback
-				XT_XML_Admin::PLUGIN_SLUG, // Page
+				$this->plugin_slug, // Page
 				$settings->section, // Section
 				array($settings) // Args
 			);
@@ -205,29 +200,29 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 			$args = $args[0];
 			?>
 			<input type="hidden"
-			       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][tag_name]"
+			       name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][tag_name]"
 			       value="<?php echo $args->tag; ?>" />
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][image_size]">
+				<label for="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][image_size]">
 					Image Size:&nbsp;&nbsp;&nbsp;
 					<input type="<?php echo $args->field; ?>"
-					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][image_size]"
+					       name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][image_size]"
 					       value="<?php echo $this->image_size_field( $args->image_size) ?>" />
 				</label>
 			</div>
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][word_count]">
+				<label for="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][word_count]">
 					Word Count:&nbsp;
 					<input type="<?php echo $args->field; ?>"
-					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][word_count]"
+					       name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][word_count]"
 					       value="<?php echo $this->input_field_value($args->word_count) ?>" />
 				</label>
 			</div>
 			<div>
-				<label for="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][feed_count]">
+				<label for="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][feed_count]">
 					Feed Count: &nbsp;
 					<input type="<?php echo $args->field; ?>"
-					       name="<?php echo self::OPTIONS_STR; ?>[<?php echo $args->id; ?>][feed_count]"
+					       name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][feed_count]"
 					       value="<?php echo $this->input_field_value($args->feed_count) ?>" />
 				</label>
 			</div>
@@ -268,7 +263,7 @@ if ( ! class_exists( 'XT_XML_Admin' ) ) {
 		 */
 		public function new_error($message, $type) {
 			add_settings_error(
-				self::OPTIONS_STR,
+				$this->options_str,
 				'settings_updated',
 				$message,
 				$type
