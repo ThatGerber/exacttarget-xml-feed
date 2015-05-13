@@ -109,21 +109,24 @@ class XT_XML_Admin {
     /**
      * PHP5 Constructor
      */
-    public function __construct() {
-
+    public function __construct( XT_XML_Admin_Form $form ) {
+	    $this->form = $form;
     }
 
     /**
      * Register the Menu Page.
      */
     public function register_menu_page() {
-        $this->hook_suffix = add_options_page(
-            $this->page_title,  // Page Title
-            $this->menu_title,  // Menu Title
-            $this->user_cap,    // Capability
-            $this->plugin_slug, // Menu Slug
-            array( 'XT_XML_Admin_Form', 'instance' ) // Function
-        );
+	    $this->sections = apply_filters( $this->options_str . '_sections', array() );
+	    $this->fields   = apply_filters( $this->options_str . '_fields', array() );
+	    $this->values   = get_option( $this->options_str );
+	    $this->hook_suffix = add_options_page(
+		    $this->page_title,     // Page Title
+		    $this->menu_title,     // Menu Title
+		    $this->user_cap,       // Capability
+		    $this->plugin_slug,    // Menu Slug
+		    array( $this, 'form' ) // Function
+	    );
     }
 
     /*
@@ -134,11 +137,6 @@ class XT_XML_Admin {
     public function menu_page_init() {
         // Register settings
         $this->register_settings();
-        // Creates the settings var to be referred to
-        $this->fields = get_option( $this->options_str );
-        if ( isset( $_POST['submit'] ) && $_POST['submit'] === 'Add New Tag' ) {
-            $this->add_new_tag( $_POST['new_tag'] );
-        }
         // Add sections to settings page.
         $this->add_sections();
         // Errors
@@ -147,20 +145,17 @@ class XT_XML_Admin {
     }
 
     protected function add_new_tag( $name ) {
-
         $this->fields = get_option( $this->options_str );
         $field_names  = array();
-
         if ( ! empty( $this->fields ) ) {
             foreach ( $this->fields as $field ) {
                 $field_names[] = $field->id;
             }
         }
-
         if (
             false === array_search( xt_field_name_slugify( $name ), $field_names )
         ) {
-            $this->fields[] = new XT_XML_Tag($name);
+            $this->fields[] = new XT_XML_Tag( $name );
         }
 
         return xt_update_option( $this->options_str, $this->fields);
@@ -178,21 +173,26 @@ class XT_XML_Admin {
         );
     }
 
-    /**
-     * Create form for plugin settings.
-     */
-    public function add_sections() {
+	/**
+	 * Create form for plugin settings.
+	 *
+	 * @since 0.0.1
+	 * @access public
+	 */
+	public function add_sections() {
 
-        foreach ( $this->sections as $section ) {
-            $this->create_settings_section($section);
-        }
+		if ( $this->sections ) {
+			foreach ( $this->sections as $section ) {
+				$this->create_settings_section( $section );
+			}
+		}
 
-        if ($this->fields) {
-            foreach ( $this->fields as $setting ) {
-                $this->create_settings_field($setting);
-            }
-        }
-    }
+		if ( $this->fields ) {
+			foreach ( $this->fields as $setting ) {
+				$this->create_settings_field( $setting );
+			}
+		}
+	}
 
     /**
      * Sanitize and validate input. Accepts an array, return a sanitized array.
@@ -229,46 +229,79 @@ class XT_XML_Admin {
         settings_errors( $this->options_str );
     }
 
-    /**
-     * @param array $settings
-     *
-     *              ID = input ID,
-     *              Title = Name of field,
-     */
-    protected function create_settings_section( $section ) {
-        add_settings_section(
-            $section['id'], //    'basic_settings', // ID
-            $section['title'], // 'Tags', // Title
-            array( $this, 'basic_section_callback' ), // Callback
-            $this->plugin_slug // Page
-        ); // Args
-    }
+	/**
+	 * Creates the settings sections
+	 *
+	 * @since 0.0.1
+	 * @access protected
+	 *
+	 * @param array $section ID = input ID,
+	 *                       Title = Name of field,
+	 */
+	protected function create_settings_section( $section ) {
+		add_settings_section(
+			$section['id'],    // ID
+			$section['title'], // Title
+			array( $this, 'basic_section_callback' ), // Callback
+			$this->plugin_slug // Page
+		);
+	}
 
-    /**
-     * @param object $settings
-     *              ID = input ID,
-     *              Title = Name of field,
-     *              Field = Type of field,
-     *              Description = Description below field
-     */
-    protected function create_settings_field( $settings ) {
-        add_settings_field(
-            $settings->id, // ID
-            $settings->tag, // Title
-            array( $this, 'basic_input_callback' ), // Callback
-            $this->plugin_slug, // Page
-            $settings->section, // Section
-            array($settings) // Args
-        );
-    }
+	/**
+	 * Creates settings fields
+	 *
+	 * @since 0.0.1
+	 * @access protected
+	 *
+	 * @param array $settings
+	 *              ID = input ID,
+	 *              Title = Name of field,
+	 *              Field = Type of field,
+	 *              Callback = Callback function
+	 *              Description = Description below field
+	 */
+	protected function create_settings_field( $settings ) {
+		add_settings_field(
+			$settings['id'], // ID
+			$settings['title'], // Title
+			array( $this->form, $settings['callback'] ), // Callback
+			$this->plugin_slug, // Page
+			$settings['section'], // Section
+			array($settings) // Args
+		);
+	}
+
+	/**
+	 * Renders Form Object
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 */
+	public function form() {
+		$this->form->values            = $this->values;
+		$this->form->options_str       = $this->options_str;
+		$this->form->title             = $this->page_title;
+		$this->form->settings_fields   = $this->options_grp;
+		$this->form->settings_sections = $this->plugin_slug;
+		$this->form->render_form();
+	}
 
     /**
      * Basic section callback. Creates the settings header.
+     *
+     * @since 1.0.0
+     * @access public
+     *
+     * @param $args array
      */
-    public function basic_section_callback() {
-        echo '';
-    }
+    public function basic_section_callback( $args ) {}
 
+	/**
+	 * To be replaced
+	 *
+	 * @param $args array
+	 */
     public function basic_input_callback( $args ) {
         $args = $args[0];
         ?>

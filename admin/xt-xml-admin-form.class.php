@@ -1,58 +1,54 @@
 <?php
 
-if ( ! class_exists( 'XT_XML_Admin_Form' ) ) {
+class XT_XML_Admin_Form extends XT_XML_Form {
 
-class XT_XML_Admin_Form {
+	public $terms;
 
-	protected static $instance;
+	public $xml;
 
-	static function instance() {
-		if (!isset(static::$instance)) {
-			static::$instance = new static;
-		}
+	public function __construct(XT_XML $xml ) {
+		$this->xml = $xml;
 
-		return static::$instance;
-	}
-
-
-	protected function __construct() {
-		$this->admin_form();
 	}
 
 	/**
 	 * Options page callback
 	 */
-	public function admin_form() {
+	public function render_form() {
 		?>
 		<div class="wrap">
-			<h2>Admin Form</h2>
+			<?php $this->form_title(); ?>
 			<div class="postbox ">
 				<div class="inside">
-					<p>
-						This plugin allows you to set image sizes for an XML feed used by Exact Target.
-					</p>
-					<p>
-						To set the image size, choose a tag to associate with that size.
-						<strong>Please note: After changing the image size, you will need to
-						regenerate thumbnails to apply changes to older images.</strong>
-					</p>
 					<form method="post" action="options.php">
-						<?php settings_fields( 'exact_target_xml' ); ?>
-						<?php do_settings_sections( 'xt_xml' ); ?>
-						<?php submit_button( ); ?>
+						<?php settings_fields( $this->settings_fields ); ?>
+						<?php do_settings_sections( $this->settings_sections ); ?>
 					</form>
-					<!-- Add New tag -->
-					<form method="post" action="">
-						<p class="submit" style="display:inline-block;">
-							Name: <br /><input type="text" value="" name="new_tag" />
-							<input type="submit" name="submit" id="submit" class="button button-primary" value="Add New Tag">
-						</p>
-					</form>
+				</div>
+			</div>
+			<div class="postbox ">
+				<div class="inside">
+					<h3>Tags</h3>
+					<?php $this->get_all_tags(); ?>
 				</div>
 			</div>
 		</div>
 	<?php
 	}
-}
 
+	public function get_all_tags() {
+
+		$args = array(
+			'orderby'           => 'name',
+			'hide_empty'        => false,
+			'exclude'           => array(),
+			'exclude_tree'      => array(),
+			'include'           => array(),
+			'fields'            => 'all'
+		);
+
+		$this->terms = get_terms( $this->xml->taxonomy_name, $args );
+
+		var_dump( $this->terms );
+	}
 }

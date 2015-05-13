@@ -3,21 +3,20 @@
  * Class XT_XML
  */
 
-if ( ! class_exists( 'XT_XML' ) ) {
-
 class XT_XML {
 
+	/** @var mixed|void  */
 	public $tags;
 
+	public $taxonomy_name = 'email_tags';
+
 	/**
-	 * Things to do on construct
+	 * PHP5 Constructor
 	 *
+	 * @param $options_str string
 	 */
 	public function __construct( $options_str ) {
 		$this->tags = get_option( $options_str );
-	}
-
-	private function file_includes() {
 	}
 
 	/**
@@ -25,7 +24,6 @@ class XT_XML {
 	 *
 	 */
 	public function add_image_sizes() {
-
 		if (
 			is_array( $this->tags ) &&
 			count( $this->tags ) >= 0
@@ -39,14 +37,15 @@ class XT_XML {
 				);
 			}
 		}
-
-		// Will be deprecated.
-		add_image_size( 'featured-email-thumb', 200, 133, true ); //300 pixels wide (and unlimited height)
-		add_image_size( 'email-thumb', 125, 90, true ); //(cropped)
+		add_image_size( 'featured-email-thumb', 200, 133, true );
+		add_image_size( 'email-thumb', 125, 90, true );
 	}
 
 	/**
+	 * Register email Tags taxonomy
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 */
 	public function register_taxonomy() {
 		// Register Custom Taxonomy
@@ -78,8 +77,10 @@ class XT_XML {
 			'show_in_nav_menus'          => false,
 			'show_tagcloud'              => false,
 		);
-		register_taxonomy( 'email_tags', array( 'post' ), $args );
-	}
-}
 
+		/** @var array $post_types */
+		$post_types =  apply_filters( 'xt_xml_tag_post_types', array( 'post' ) );
+
+		register_taxonomy( $this->taxonomy_name, $post_types, $args );
+	}
 }

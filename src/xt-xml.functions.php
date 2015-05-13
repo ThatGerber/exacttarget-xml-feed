@@ -55,9 +55,9 @@ function xt_get_field( $fields = null, $name ) {
 
 function xt_get_the_category() {
 
-	$cat = get_category( get_query_var( 'cat' ) );
+	$category = get_category( get_query_var( 'cat' ) );
 
-	return ( ! is_wp_error( $cat ) ? $cat : null);
+	return ( ! is_wp_error( $category ) ? $category : null);
 }
 
 function get_xt_get_template_part( $part, $ext = 'php' ) {
@@ -80,14 +80,14 @@ function xt_get_template_part( $part, $ext = 'php' ) {
 }
 
 function xt_get_word_count() {
-	$field = xt_get_field( get_option(XT_XML_Admin::OPTIONS_STR), XT_XML_Feed::$cat->slug );
-	if ( is_a($field, 'XT_XML_Tag') ) {
+	//$field = xt_get_field( get_option('exact_target_xml'), $cat->slug );
+	//if ( is_a($field, 'XT_XML_Tag') ) {
 
-		return $field->word_count;
-	} else {
+	//	return $field->word_count;
+	//} else {
 
 		 return 50;
-	}
+	//}
 }
 
 function get_image_sizes( $size = '' ) {

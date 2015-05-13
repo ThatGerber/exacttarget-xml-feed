@@ -3,46 +3,33 @@
  * Class for creating feed objects.
  */
 
-if ( !class_exists( 'XT_XML_Feed' ) ) {
-
 class XT_XML_Feed {
 
 	public $field;
 
-	public static $cat;
+	public $cat;
 
-	protected static $instance;
-
-	static function instance() {
-		if (!isset(static::$instance)) {
-			static::$instance = new static;
-		}
-
-		return static::$instance;
-	}
-
-	protected function __construct( ) {
+	public function __construct( $options_str ) {
 
 		add_filter( 'excerpt_length', array($this, 'excerpt_length'), 999 );
 		// Let's get rid of stupid smart quotes
-		remove_filter( 'the_title_rss', 'wptexturize' );
 		remove_filter( 'the_content', 'wptexturize' );
-		remove_filter( 'comment_text', 'wptexturize' );
 		remove_filter( 'the_excerpt', 'wptexturize' );
-
-		static::$cat = xt_get_the_category();
-
-		if ( static::$cat ) {
-			$this->field = xt_get_field( get_option(XT_XML_Admin::OPTIONS_STR), static::$cat->slug );
-		}
-
-		$this->get_feed();
+		remove_filter( 'comment_text', 'wptexturize' );
+		remove_filter( 'the_title_rss', 'wptexturize' );
 	}
 
 	/**
 	 * Instantiates the feed.
 	 */
 	public function get_feed() {
+
+		$this->cat = xt_get_the_category();
+
+		if ( $this->cat ) {
+			$this->field = xt_get_field( get_option( $options_str ), $this->cat->slug );
+		}
+
 		$count = 0;
 
 		$limit = ( is_a( $this->field, 'XT_XML_Tag' ) ? $this->field->feed_count : 10 );
@@ -121,7 +108,5 @@ class XT_XML_Feed {
 
 		return xt_get_word_count();
 	}
-
-}
 
 }
