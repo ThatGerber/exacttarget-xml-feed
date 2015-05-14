@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAEE,kBAAW;EACT,MAAM,EAAE,IAAI;EACZ,OAAO,EAAE,MAAM;EACf,OAAO,EAAE,YAAY;EACrB,KAAK,EAAE,GAAG;EACV,MAAM,EAAE,iBAAiB;EACzB,kBAAkB,EAAE,6BAAyB;EAC7C,UAAU,EAAE,6BAAyB",
+"sources": ["admin.scss"],
+"names": [],
+"file": "admin.css"
+}

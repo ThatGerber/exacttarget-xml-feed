@@ -113,6 +113,10 @@ class XT_XML_Admin {
 	    $this->form = $form;
     }
 
+	public function scripts_and_styles() {
+		wp_enqueue_style( 'xt-xml-admin', plugins_url('../assets/css/admin.css', __FILE__ ) );
+	}
+
     /**
      * Register the Menu Page.
      */
@@ -145,20 +149,8 @@ class XT_XML_Admin {
     }
 
     protected function add_new_tag( $name ) {
-        $this->fields = get_option( $this->options_str );
-        $field_names  = array();
-        if ( ! empty( $this->fields ) ) {
-            foreach ( $this->fields as $field ) {
-                $field_names[] = $field->id;
-            }
-        }
-        if (
-            false === array_search( xt_field_name_slugify( $name ), $field_names )
-        ) {
-            $this->fields[] = new XT_XML_Tag( $name );
-        }
 
-        return xt_update_option( $this->options_str, $this->fields);
+	    return true;
     }
 
     /**
@@ -302,53 +294,10 @@ class XT_XML_Admin {
 	 *
 	 * @param $args array
 	 */
-    public function basic_input_callback( $args ) {
-        $args = $args[0];
-        ?>
-        <input type="hidden"
-               name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][tag_name]"
-               value="<?php echo $args->tag; ?>" />
-        <div>
-            <label for="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][image_size]">
-                Image Size:&nbsp;&nbsp;&nbsp;
-                <input type="<?php echo $args->field; ?>"
-                       name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][image_size]"
-                       value="<?php echo $this->image_size_field( $args->image_size) ?>" />
-            </label>
-        </div>
-        <div>
-            <label for="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][word_count]">
-                Word Count:&nbsp;
-                <input type="<?php echo $args->field; ?>"
-                       name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][word_count]"
-                       value="<?php echo $this->input_field_value($args->word_count) ?>" />
-            </label>
-        </div>
-        <div>
-            <label for="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][feed_count]">
-                Feed Count: &nbsp;
-                <input type="<?php echo $args->field; ?>"
-                       name="<?php echo $this->options_str; ?>[<?php echo $args->id; ?>][feed_count]"
-                       value="<?php echo $this->input_field_value($args->feed_count) ?>" />
-            </label>
-        </div>
-    <?php
-    }
+    public function basic_input_callback( $args ) {}
 
     /**
-     * Formats the input field for image sizes.
-     *
-     * @param array $size
-     *
-     * @return string
-     */
-    protected function image_size_field( $size ) {
-
-        return ( isset( $size ) ? $size[0] . 'x' . $size[1] : '' );
-    }
-
-    /**
-     * Just double checks something is set before it's
+     * Just double checks something is set before it's returned
      *
      * @param $value
      *

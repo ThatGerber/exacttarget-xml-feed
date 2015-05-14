@@ -8,7 +8,9 @@ class XT_XML {
 	/** @var mixed|void  */
 	public $tags;
 
-	public $taxonomy_name = 'email_tags';
+	public $taxonomy_slug = 'email_tags';
+
+	public $taxonomy_name = 'Email Tags';
 
 	/**
 	 * PHP5 Constructor
@@ -81,6 +83,6 @@ class XT_XML {
 		/** @var array $post_types */
 		$post_types =  apply_filters( 'xt_xml_tag_post_types', array( 'post' ) );
 
-		register_taxonomy( $this->taxonomy_name, $post_types, $args );
+		register_taxonomy( $this->taxonomy_slug, $post_types, $args );
 	}
 }

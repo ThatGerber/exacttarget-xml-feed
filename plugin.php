@@ -10,33 +10,27 @@ GitHub Branch:     master
 Author URI:        http://www.chriswgerber.com/
 License:           GPL2
 */
-
 include 'src/xt-xml.functions.php';
 include 'src/xt-xml.class.php';
 include 'src/xt-xml-feed.class.php';
-include 'admin/xt-xml-tag.class.php';
+include 'src/xt-xml-tag.class.php';
 /* Fires up the Factory */
 $xt_xml = new XT_XML( 'exact_target_xml' );
 /* Register the Email Tag Taxonomy */
 add_action( 'init', array( $xt_xml, 'register_taxonomy' ), 0 );
 /* Adds image sizes */
 add_action( 'after_setup_theme', array( $xt_xml, 'add_image_sizes') );
-
 /* Adds XML feed */
 $xt_xml_feed = new XT_XML_Feed( 'exact_target_xml' );
 add_action( 'do_feed_xtxml', array( $xt_xml_feed, 'get_feed' ) );
-
 /* Admin */
 if ( is_admin() ) {
-	include 'admin/xt-xml-admin.class.php';
+	include 'src/xt-xml-admin.class.php';
 	include 'src/abstract.xt_xml_form.php';
-	include 'admin/xt-xml-settings.class.php';
-	include 'admin/xt-xml-admin-form.class.php';
-
+	include 'src/xt-xml-settings.class.php';
+	include 'src/xt-xml-admin-form.class.php';
 	/* Setup form */
 	$xt_xml_form = new XT_XML_Admin_Form( $xt_xml );
-
-
 	$xt_xml_admin = new XT_XML_Admin( $xt_xml_form );
 	$xt_xml_admin->page_title  = 'Exact Target XML Pages';
 	$xt_xml_admin->menu_title  = 'Exact Target XML';
@@ -45,10 +39,9 @@ if ( is_admin() ) {
 	$xt_xml_admin->options_str = 'exact_target_xml';
 	$xt_xml_admin->options_grp = 'exact_target_xml-group';
 	$xt_xml_admin->fields_str  = 'exact_target_xml_fields';
-
-	/*
-	 * Settings Page
-	 */
+	/* Admin Scripts */
+	add_action('admin_enqueue_scripts', array( $xt_xml_admin, 'scripts_and_styles' ) );
+	/* General Section */
 	add_filter( $xt_xml_admin->options_str .'_sections', ( function( $sections ) {
 		$sections['import_data'] = array(
 			'id'    => 'manage_feeds',
@@ -57,6 +50,7 @@ if ( is_admin() ) {
 
 		return $sections;
 	} ) );
+	/* Setting */
 	add_filter( $xt_xml_admin->options_str . '_fields', ( function( $fields ) {
 		$fields['intro'] = array(
 			'id'          => 'intro',
@@ -69,7 +63,6 @@ if ( is_admin() ) {
 
 		return $fields;
 	} ) );
-
 	/* Tag Settings Page */
 	add_action( 'admin_menu', array( $xt_xml_admin, 'register_menu_page' ) );
 	add_action( 'admin_init', array( $xt_xml_admin, 'menu_page_init' ) );

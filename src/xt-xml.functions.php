@@ -102,16 +102,16 @@ function get_image_sizes( $size = '' ) {
 
 		if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
 
-			$sizes[ $_size ]['width'] = get_option( $_size . '_size_w' );
+			$sizes[ $_size ]['width']  = get_option( $_size . '_size_w' );
 			$sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
-			$sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
+			$sizes[ $_size ]['crop']   = get_option( $_size . '_crop' );
 
 		} elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
 
 			$sizes[ $_size ] = array(
-				'width' => $_wp_additional_image_sizes[ $_size ]['width'],
+				'width'  => $_wp_additional_image_sizes[ $_size ]['width'],
 				'height' => $_wp_additional_image_sizes[ $_size ]['height'],
-				'crop' =>  $_wp_additional_image_sizes[ $_size ]['crop']
+				'crop'   => $_wp_additional_image_sizes[ $_size ]['crop']
 			);
 
 		}
@@ -130,4 +130,15 @@ function get_image_sizes( $size = '' ) {
 	}
 
 	return $sizes;
+}
+
+function var_dump_all( $expression ) {
+
+	foreach ( $expression as $key => $object ) {
+
+		var_dump( $key );
+		var_dump( $object );
+
+	}
+
 }
