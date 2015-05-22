@@ -14,15 +14,30 @@ include 'src/xt-xml.functions.php';
 include 'src/xt-xml.class.php';
 include 'src/xt-xml-feed.class.php';
 include 'src/xt-xml-tag.class.php';
+$xt_tax_slug = 'email_tags';
+$xt_options_str = 'exact_target_xml';
 /* Fires up the Factory */
-$xt_xml = new XT_XML( 'exact_target_xml' );
+$xt_xml = new XT_XML;
+$xt_xml->options_str = $xt_options_str;
+$xt_xml->defaults = array(
+	'post_count' => '10',
+	'word_count' => '25',
+	'image_size' => '125x125'
+);
+$xt_xml->taxonomy_slug = $xt_tax_slug;
+$xt_xml->taxonomy_name = 'Email Tags';
 /* Register the Email Tag Taxonomy */
 add_action( 'init', array( $xt_xml, 'register_taxonomy' ), 0 );
 /* Adds image sizes */
 add_action( 'after_setup_theme', array( $xt_xml, 'add_image_sizes') );
 /* Adds XML feed */
-$xt_xml_feed = new XT_XML_Feed( 'exact_target_xml' );
+$xt_xml_feed = new XT_XML_Feed( $xt_options_str );
 add_action( 'do_feed_xtxml', array( $xt_xml_feed, 'get_feed' ) );
+/* Taxonomy Create/Update/Delete Hooks */
+// Create
+add_action( "created_${xt_tax_slug}", array( $xt_xml, 'add_option' ), 10, 2 );
+// Delete
+add_action( "deleted_${xt_tax_slug}", array( $xt_xml, 'delete_option' ), 10, 2 );
 /* Admin */
 if ( is_admin() ) {
 	include 'src/xt-xml-admin.class.php';
@@ -36,9 +51,9 @@ if ( is_admin() ) {
 	$xt_xml_admin->menu_title  = 'Exact Target XML';
 	$xt_xml_admin->user_cap    = 'manage_options';
 	$xt_xml_admin->plugin_slug = 'xt_xml';
-	$xt_xml_admin->options_str = 'exact_target_xml';
-	$xt_xml_admin->options_grp = 'exact_target_xml-group';
-	$xt_xml_admin->fields_str  = 'exact_target_xml_fields';
+	$xt_xml_admin->options_str = $xt_options_str;
+	$xt_xml_admin->options_grp = "${xt_options_str}-group";
+	$xt_xml_admin->fields_str  = "${xt_options_str}_fields";
 	/* Admin Scripts */
 	add_action('admin_enqueue_scripts', array( $xt_xml_admin, 'scripts_and_styles' ) );
 	/* General Section */
@@ -58,7 +73,7 @@ if ( is_admin() ) {
 			'callback'    => 'paragraph',
 			'title'       => 'Using the email tag manager',
 			'section'     => 'manage_feeds',
-			'description' => 'This is how you use the email tag manager. Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet .Lorem ipsum dolor sit amet .Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet .'
+			'description' => 'Edit the settings for your tag here.'
 		);
 
 		return $fields;

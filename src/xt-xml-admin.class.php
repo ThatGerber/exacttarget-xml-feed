@@ -148,11 +148,6 @@ class XT_XML_Admin {
 
     }
 
-    protected function add_new_tag( $name ) {
-
-	    return true;
-    }
-
     /**
      * Register the plugin settings.
      */
@@ -193,26 +188,7 @@ class XT_XML_Admin {
      *
      * @return array $new_input
      */
-    public function options_validate( $input ) {
-
-        if ( is_a( $input[0], 'XT_XML_Tag' ) ) {
-
-            return $input;
-        } elseif ( is_array( $input ) ) {
-            foreach ( $input as $key => $value ) {
-                if (
-                    ( $field = xt_get_field($this->fields, $key) ) !== null
-                ) {
-                    $field->update_image_size( $value['image_size'] );
-                    $field->update_feed_count( $value['feed_count'] );
-                    $field->update_word_count( $value['word_count'] );
-                }
-            }
-        }
-        set_transient( 'epg_validate_input_data', $this->fields, 60);
-
-        return $this->fields;
-    }
+    public function options_validate( $input ) {}
 
     /**
      * Queue up the errors

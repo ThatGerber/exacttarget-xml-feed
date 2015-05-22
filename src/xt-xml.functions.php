@@ -3,7 +3,6 @@
  * Helper Functions
  */
 
-
 /**
  * @param $name
  * @param $value
@@ -133,12 +132,9 @@ function get_image_sizes( $size = '' ) {
 }
 
 function var_dump_all( $expression ) {
-
-	foreach ( $expression as $key => $object ) {
-
-		var_dump( $key );
-		var_dump( $object );
-
-	}
-
+	echo '<div class="postbox">';
+	echo '<div class="inside">';
+	var_dump( $expression );
+	echo '</div>';
+	echo '</div>';
 }

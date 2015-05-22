@@ -107,24 +107,22 @@ Abstract Class XT_XML_Form {
 	 * @param $args array
 	 */
 	public function text( $args ) {
-		// Why is it so nested?
-		$args  = $args[0];
-		$id    = $this->options_str . '[' . $args['id'] . ']';
+		$id    = $this->options_str . '[' . $args['id'] . '][' . $args['name'] . ']';
 		$field = $args['field'];
 		$title = $args['title'];
-		$value = ( ! isset( $this->values[ $args['id'] ] ) ? '' : $this->values[ $args['id'] ] );
+		$value = ( ! isset( $this->values[ $args['id'] ][ $args['name'] ] ) ? '' : $this->values[ $args['id'] ][ $args['name'] ] );
 		?>
-		<div>
-			<input type="<?php _e( $field, 'dfp-ads' ); ?>"
-			       id="<?php _e( $id, 'dfp-ads' ); ?>"
-			       name="<?php _e( $id, 'dfp-ads' ); ?>"
-			       value="<?php _e( $value, 'dfp-ads' ); ?>" />
-			<?php
-			if ( isset( $args['description'] ) ) {
-				echo '<p><em>'. $args['description'] . '</em></p>';
-			}
-			?>
-		</div>
+		<td>
+			<label for="<?php _e( $id, 'xt_xml' ); ?>">
+				<?php _e( $title, 'xt_xml' ); ?>
+			</label>
+		</td>
+		<td>
+			<input type="<?php _e( $field, 'xt_xml' ); ?>"
+			       id="<?php _e( $id, 'xt_xml' ); ?>"
+			       name="<?php _e( $id, 'xt_xml' ); ?>"
+			       value="<?php _e( $value, 'xt_xml' ); ?>" />
+		</td>
 	<?php
 	}
 
