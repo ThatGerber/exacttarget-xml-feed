@@ -45,17 +45,32 @@ class XT_XML {
 	 */
 	public $defaults = array ();
 
-	/**
-	 * Returns options for a string
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return mixed|null|void
-	 */
+    /**
+     * @since 1.0.0
+     * @access public
+     *
+     * @var array
+     */
+    public $values;
+
+    /**
+     * Returns options for a string
+     *
+     * @since 1.0.0
+     * @access public
+     *
+     * @return array|mixed|void
+     */
 	public function get_options() {
 
-		return get_option( $this->options_str );
+        if ( isset( $this->values ) ) {
+
+            return $this->values;
+        } else {
+            $this->values = get_option( $this->options_str );
+
+            return $this->values;
+        }
 	}
 
 	/**
@@ -162,14 +177,13 @@ class XT_XML {
 	 * @param $tt_id   int
 	 */
 	public function add_option( $term_id, $tt_id ) {
-		$options = get_option( $this->options_str );
-		//var_dump( $options );
-		$options[ 'term_' . $tt_id ] = $this->defaults;
-		//var_dump( $options );
+        $transient = array();
+		$options = $this->get_options();
+        $transient['pre-load'] = $options;
+		$options[ $tt_id ] = $this->defaults;
+        $transient['after-adding'] = $options;
 		$updated = update_option( $this->options_str, $options );
-		//var_dump ( $updated );
-		//var_dump ( $this );
-		//trigger_error('yes');
+        $transient['updated'] = $updated;
 	}
 
 	/**
