@@ -10,40 +10,59 @@ GitHub Branch:     master
 Author URI:        http://www.chriswgerber.com/
 License:           GPL2
 */
+
+$xt_dirname = dirname( __FILE__ );
+
+/* Files */
 include 'src/xt-xml.functions.php';
 include 'src/xt-xml.class.php';
 include 'src/xt-xml-feed.class.php';
 include 'src/xt-xml-tag.class.php';
+include 'src/xt-xml-admin.class.php';
+include 'src/abstract.xt_xml_form.php';
+include 'src/xt-xml-settings.class.php';
+include 'src/xt-xml-admin-form.class.php';
+include 'src/class.xt-xml-metabox.php';
+
+/* A few constants */
 $xt_tax_slug = 'email_tags';
 $xt_options_str = 'exact_target_xml';
 /* Fires up the Factory */
 $xt_xml = new XT_XML;
-$xt_xml->options_str = $xt_options_str;
-$xt_xml->defaults = array(
-	'post_count' => '10',
-	'word_count' => '25',
-	'image_size' => '125x125'
-);
+$xt_xml->options_str   = $xt_options_str;
 $xt_xml->taxonomy_slug = $xt_tax_slug;
 $xt_xml->taxonomy_name = 'Email Tags';
+$xt_xml->defaults      = array(
+	'post_count' => 10,
+	'word_count' => 25,
+	'image_size' => '125x125'
+);
 /* Register the Email Tag Taxonomy */
 add_action( 'init', array( $xt_xml, 'register_taxonomy' ), 0 );
 /* Adds image sizes */
 add_action( 'after_setup_theme', array( $xt_xml, 'add_image_sizes') );
+
+/* Metabox */
+$xt_metabox = new XT_XML_Metabox;
+/* Settings */
+$xt_metabox->id         = 'xt_xml';
+$xt_metabox->title      = 'Except for Enewsletter';
+$xt_metabox->post_types = $xt_xml->post_types();
+$xt_metabox->register_metaboxes();
+$xt_metabox->register_save_data();
+
 /* Adds XML feed */
-$xt_xml_feed = new XT_XML_Feed( $xt_options_str );
+$xt_xml_feed = new XT_XML_Feed( $xt_xml, $xt_options_str );
+$xt_xml_feed->desc_meta_key = $xt_metabox->meta_key;
 add_action( 'do_feed_xtxml', array( $xt_xml_feed, 'get_feed' ) );
 /* Taxonomy Create/Update/Delete Hooks */
 // Create
-add_action( "created_${xt_tax_slug}", array( $xt_xml, 'add_option' ), 10, 2 );
+add_action( "created_${xt_tax_slug}", array( $xt_xml, 'update_option' ), 10, 2 );
 // Delete
 add_action( "deleted_${xt_tax_slug}", array( $xt_xml, 'delete_option' ), 10, 2 );
+
 /* Admin */
 if ( is_admin() ) {
-	include 'src/xt-xml-admin.class.php';
-	include 'src/abstract.xt_xml_form.php';
-	include 'src/xt-xml-settings.class.php';
-	include 'src/xt-xml-admin-form.class.php';
 	/* Setup form */
 	$xt_xml_form = new XT_XML_Admin_Form( $xt_xml );
 	$xt_xml_admin = new XT_XML_Admin( $xt_xml_form );
@@ -78,6 +97,11 @@ if ( is_admin() ) {
 
 		return $fields;
 	} ) );
+
+	if ( isset( $_POST['submit'] ) && $_POST['submit'] == 'Update Tags' ) {
+		update_option( $xt_xml->options_str, $_POST[ $xt_xml->options_str ] );
+	}
+
 	/* Tag Settings Page */
 	add_action( 'admin_menu', array( $xt_xml_admin, 'register_menu_page' ) );
 	add_action( 'admin_init', array( $xt_xml_admin, 'menu_page_init' ) );

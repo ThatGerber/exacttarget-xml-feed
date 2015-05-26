@@ -188,7 +188,59 @@ class XT_XML_Admin {
      *
      * @return array $new_input
      */
-    public function options_validate( $input ) {}
+    public function options_validate( $input ) {
+	    $new_input = array();
+	    foreach ( $input as $tt_id => $value ) {
+			// $tt_id = Term Tax. ID
+		    // $value = array of values
+		    //          post_count
+		    //          word_count
+            //          image_size
+			$new_input[ $tt_id ][ 'post_count' ] = $this->article_validate( $value['post_count'] );
+		    $new_input[ $tt_id ][ 'word_count' ] = $this->wordcount_validate( $value['word_count'] );
+		    $new_input[ $tt_id ][ 'image_size' ] = $this->imagesize_validate( $value['image_size'] );
+	    }
+
+	    return $new_input;
+    }
+
+	/**
+	 * Validates value as int
+	 *
+	 * @param $value int
+	 *
+	 * @return int
+	 */
+	public function article_validate( $value ) {
+		$new_value = intval( $value );
+
+		return ( is_int( $new_value ) ? $new_value : 10 );
+	}
+
+	/**
+	 * Validates value as int
+	 *
+	 * @param $value int
+	 *
+	 * @return int
+	 */
+	public function wordcount_validate( $value ) {
+		$new_value = intval( $value );
+
+		return ( is_int( $new_value ) ? $new_value : 10 );
+	}
+
+	/**
+	 * Escapes string
+	 *
+	 * @param $value
+	 *
+	 * @return string
+	 */
+	public function imagesize_validate( $value ) {
+
+		return $value;
+	}
 
     /**
      * Queue up the errors

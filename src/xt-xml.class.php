@@ -135,8 +135,7 @@ class XT_XML {
 		);
 
 		/** @var array $post_types */
-		$post_types =  apply_filters( 'xt_xml_tag_post_types', array( 'post' ) );
-
+		$post_types = $this->post_types();
 		register_taxonomy( $this->taxonomy_slug, $post_types, $args );
 	}
 
@@ -168,26 +167,7 @@ class XT_XML {
 	}
 
 	/**
-	 * Add new option to database
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param $term_id int
-	 * @param $tt_id   int
-	 */
-	public function add_option( $term_id, $tt_id ) {
-        $transient = array();
-		$options = $this->get_options();
-        $transient['pre-load'] = $options;
-		$options[ $tt_id ] = $this->defaults;
-        $transient['after-adding'] = $options;
-		$updated = update_option( $this->options_str, $options );
-        $transient['updated'] = $updated;
-	}
-
-	/**
-	 * Update database option
+	 * Add/update new option to database
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -196,7 +176,9 @@ class XT_XML {
 	 * @param $tt_id   int
 	 */
 	public function update_option( $term_id, $tt_id ) {
-
+		$options = $this->get_options();
+		$options[ $tt_id ] = $this->defaults;
+		update_option( $this->options_str, $options );
 	}
 
 	/**
@@ -209,8 +191,18 @@ class XT_XML {
 	 * @param $tt_id   int
 	 */
 	public function delete_option( $term_id, $tt_id ) {
-
+		$options = $this->get_options();
+		$options[ $tt_id ] = null;
+		update_option( $this->options_str, $options );
 	}
 
+	/**
+	 * Returns post types applied to xt_xml tag
+	 *
+	 * @return mixed|void
+	 */
+	public function post_types() {
 
+		return apply_filters( 'xt_xml_tag_post_types', array( 'post' ) );
+	}
 }

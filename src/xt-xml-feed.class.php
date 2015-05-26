@@ -5,13 +5,25 @@
 
 class XT_XML_Feed {
 
+	public $xml;
+
 	public $field;
 
 	public $cat;
 
-	public function __construct( $options_str ) {
+	public $options_str;
 
-		add_filter( 'excerpt_length', array($this, 'excerpt_length'), 999 );
+	public $desc_meta_key;
+
+	/**
+	 * PHP5 Constructor
+	 *
+	 * @param XT_XML $xml
+	 * @param string $options_str
+	 */
+	public function __construct( XT_XML $xml, $options_str ) {
+		$this->xml = $xml;
+		$this->options_str = $options_str;
 		// Let's get rid of stupid smart quotes
 		remove_filter( 'the_content', 'wptexturize' );
 		remove_filter( 'the_excerpt', 'wptexturize' );
@@ -23,34 +35,18 @@ class XT_XML_Feed {
 	 * Instantiates the feed.
 	 */
 	public function get_feed() {
+		global $xt_dirname;
 
-		$this->cat = xt_get_the_category();
-
-		if ( $this->cat ) {
-			$this->field = xt_get_field( get_option( $options_str ), $this->cat->slug );
-		}
-
-		$count = 0;
-
-		$limit = ( is_a( $this->field, 'XT_XML_Tag' ) ? $this->field->feed_count : 10 );
-
-		header('Content-Type: application/xml; charset=UTF-8', true);
-
-		xt_get_template_part( 'feed-header' );
-
-		while( have_posts() ) {
-			the_post();
-			$count ++;
-
-			xt_get_template_part( 'item-template' );
-
-			if ( $count >= $limit ) {
-				break;
+		// Declare an XML feed.
+		include( $xt_dirname .'/templates/feed-header.php' );
+		if ( ( $query = $this->posts() ) && $query->have_posts() ) {
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				include( $xt_dirname . '/templates/item-template.php' );
 			}
-
+			wp_reset_postdata();
 		}
-
-		xt_get_template_part( 'feed-footer' );
+		include( $xt_dirname . '/templates/feed-footer.php' );
 	}
 
 
@@ -59,23 +55,22 @@ class XT_XML_Feed {
 	 * Echos out the link to the feed image
 	 *
 	 */
-	static function feed_image( $post, $size = 'thumbnail' ) {
-
-		echo self::get_feed_image( $post, $size );
+	public function feed_image( $size = 'thumbnail' ) {
+		if ( has_post_thumbnail() ) {
+			echo $this->get_feed_image( $size );
+		}
 	}
 
 	/**
 	 * Gets the feed image and returns it as a variable.
 	 *
-	 * @param $post
+	 * @param $size
 	 *
 	 * @return mixed
 	 */
-	static function get_feed_image( $post, $size = 'thumbnail' ) {
-
-		if ( xt_get_field( get_option(XT_XML_Admin::OPTIONS_STR), $size ) == null ) {
-			$size = 'thumbnail';
-		}
+	public function get_feed_image( $size = 'thumbnail' ) {
+		global $post;
+        $size = 'thumbnail';
 
 		if ( $size !== 'thumbnail' ) {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), $size . '-thumb' );
@@ -92,21 +87,78 @@ class XT_XML_Feed {
 	 * @param     $str
 	 * @param int $limit
 	 */
-	static function the_description( ) {
-
-		the_excerpt();
+	public function the_description( ) {
+		global $post;
+		$desc = get_post_meta( $post->ID, $this->desc_meta_key, true );
+		if ( is_string( $desc ) && strlen($desc) > 0 ) {
+			echo $this->limit_text( __( $desc ) );
+		} else {
+			echo $this->limit_text( get_the_excerpt() );
+		}
 	}
 
 	/**
-	 * Edits the length of the excerpt.
+	 * Gets custom posts call
 	 *
-	 * @param $length
-	 *
-	 * @return int
+	 * @return WP_Query
 	 */
-	public function excerpt_length( $length ) {
+	protected function posts() {
+		$term_settings = $this->get_term_settings();
+		$args = array(
+			'pagination'     => false,
+			'cache_results'  => false,
+			'post_status'    => 'publish',
+			'posts_per_page' => $term_settings[ 'post_count' ],
+			'orderby'        => 'date',
+			'tax_query'      => array(
+				array(
+					'taxonomy' => $this->xml->taxonomy_slug,
+					'field'    => 'slug',
+					'terms'    => get_query_var( 'pagename' ),
+				),
+			),
+		);
 
-		return xt_get_word_count();
+		return new WP_Query( $args );
+	}
+
+	protected function limit_text( $text ) {
+		$limit = $this->get_word_limit();
+		if ( str_word_count( $text ) > $limit ) {
+			$text = implode(" ", array_slice( explode(" ", $text), 0, $limit) );
+			if ( substr( $text, -1 ) == '.' ) {
+
+				return $text . '..';
+			} elseif ( substr( $text, -1 ) == '?') {
+
+				return $text;
+			} else {
+
+				return $text . '...';
+			}
+		}
+	}
+
+	protected function get_word_limit() {
+		$term_settings = $this->get_term_settings();
+		if ( isset( $term_settings[ 'word_count' ] ) ) {
+
+			return $term_settings[ 'word_count' ];
+		} else {
+
+			return 25;
+		}
+	}
+
+	protected function get_term_settings() {
+		$values = $this->xml->get_options();
+		$term = get_term_by( 'slug', get_query_var( 'pagename' ), $this->xml->taxonomy_slug );
+		if ( array_key_exists( $term->term_taxonomy_id, $values ) ) {
+
+			return $values[ $term->term_taxonomy_id ];
+		}
+
+		return null;
 	}
 
 }

@@ -6,7 +6,7 @@ class XT_XML_Admin_Form extends XT_XML_Form {
 
 	public $xml;
 
-	public function __construct(XT_XML $xml ) {
+	public function __construct( XT_XML $xml ) {
 		$this->xml = $xml;
 		$this->values = $this->xml->get_options();
 	}
@@ -34,8 +34,6 @@ class XT_XML_Admin_Form extends XT_XML_Form {
 					</form>
 				</div>
 			</div>
-			<?php var_dump_all( $_POST ); ?>
-			<?php var_dump_all( $this->values ); ?>
 		</div>
 	<?php
 	}

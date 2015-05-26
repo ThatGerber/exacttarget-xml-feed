@@ -3,92 +3,6 @@
  * Helper Functions
  */
 
-/**
- * @param $name
- * @param $value
- *
- * @return bool
- */
-function xt_update_option($name, $value) {
-
-	if ( get_option( $name ) !== false ) {
-
-		update_option( $name, $value );
-
-		return $value;
-	} else {
-
-		add_option( $name, $value );
-
-		return $value;
-	}
-}
-
-function xt_field_name_slugify( $name ) {
-
-	return wp_kses( sanitize_title( $name ), array() );
-}
-
-/**
- * @param $fields
- * @param $name
- *
- * @return XT_XML_Tag
- */
-function xt_get_field( $fields = null, $name ) {
-
-	if ( $fields == null ) {
-		$fields = get_option(XT_XML_Admin::OPTIONS_STR);
-	}
-
-	if ($fields !== null) {
-		foreach ( $fields as $field ) {
-			if ( $field->id == $name ) {
-				$retval = $field;
-			}
-		}
-	}
-
-	return ( isset( $retval ) ? $retval : null ) ;
-}
-
-function xt_get_the_category() {
-
-	$category = get_category( get_query_var( 'cat' ) );
-
-	return ( ! is_wp_error( $category ) ? $category : null);
-}
-
-function get_xt_get_template_part( $part, $ext = 'php' ) {
-
-	return (
-	file_exists( dirname(__FILE__) . '/templates/' . $part . '.' . $ext ) ?
-		dirname(__FILE__) . '/templates/' . $part . '.' . $ext :
-		false
-	);
-}
-
-function xt_get_template_part( $part, $ext = 'php' ) {
-
-	if ( $filename = get_xt_get_template_part( $part, $ext ) ) {
-		include ( $filename );
-	} else {
-
-		return;
-	}
-}
-
-function xt_get_word_count() {
-	//$field = xt_get_field( get_option('exact_target_xml'), $cat->slug );
-	//if ( is_a($field, 'XT_XML_Tag') ) {
-
-	//	return $field->word_count;
-	//} else {
-
-		 return 50;
-	//}
-}
-
 function get_image_sizes( $size = '' ) {
 
 	global $_wp_additional_image_sizes;
@@ -129,12 +43,4 @@ function get_image_sizes( $size = '' ) {
 	}
 
 	return $sizes;
-}
-
-function var_dump_all( $expression ) {
-	echo '<div class="postbox">';
-	echo '<div class="inside">';
-	var_dump( $expression );
-	echo '</div>';
-	echo '</div>';
 }
