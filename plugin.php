@@ -27,7 +27,7 @@ include 'includes/class.xt-xml-metabox.php';
 /* Directory */
 $xt_dirname = dirname( __FILE__ );
 /* A few constants */
-$xt_tax_slug = 'email_tags';
+$xt_tax_slug = 'email-tags';
 $xt_options_str = 'exact_target_xml';
 /* Fires up the Factory */
 $xt_xml = new XT_XML;
