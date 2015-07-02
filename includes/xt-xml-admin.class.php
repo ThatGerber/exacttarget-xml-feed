@@ -114,7 +114,7 @@ class XT_XML_Admin {
     }
 
 	public function scripts_and_styles() {
-		wp_enqueue_style( 'xt-xml-admin', plugins_url('../assets/css/admin.css', __FILE__ ) );
+		wp_enqueue_style( 'xt-xml-admin', plugins_url('../assets/css/all-admin.min.css', __FILE__ ) );
 	}
 
     /**
