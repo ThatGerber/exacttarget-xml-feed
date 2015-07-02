@@ -11,19 +11,19 @@ Author URI:        http://www.chriswgerber.com/
 License:           GPL2
 */
 
-$xt_dirname = dirname( __FILE__ );
-
 /* Files */
-include 'src/xt-xml.functions.php';
-include 'src/xt-xml.class.php';
-include 'src/xt-xml-feed.class.php';
-include 'src/xt-xml-tag.class.php';
-include 'src/xt-xml-admin.class.php';
-include 'src/abstract.xt_xml_form.php';
-include 'src/xt-xml-settings.class.php';
-include 'src/xt-xml-admin-form.class.php';
-include 'src/class.xt-xml-metabox.php';
+include 'includes/xt-xml.functions.php';
+include 'includes/xt-xml.class.php';
+include 'includes/xt-xml-feed.class.php';
+include 'includes/xt-xml-tag.class.php';
+include 'includes/xt-xml-admin.class.php';
+include 'includes/abstract.xt_xml_form.php';
+include 'includes/xt-xml-settings.class.php';
+include 'includes/xt-xml-admin-form.class.php';
+include 'includes/class.xt-xml-metabox.php';
 
+/* Directory */
+$xt_dirname = dirname( __FILE__ );
 /* A few constants */
 $xt_tax_slug = 'email_tags';
 $xt_options_str = 'exact_target_xml';
