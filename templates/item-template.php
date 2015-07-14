@@ -1,4 +1,7 @@
 <?php
+/**
+ * Single RSS Item
+ */
 global $post;
 global $xt_xml_feed;
 ?>
