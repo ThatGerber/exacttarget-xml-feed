@@ -3,7 +3,7 @@
 Plugin Name:       Exact Target XML Feed
 Description:       Custom XML Feed for Exact Target.
 Author:            Christopher Gerber
-Version:           0.1.0
+Version:           1.0.0
 Plugin URI:        http://www.github.com/ThatGerber/exacttarget-xml-feed
 Github Plugin URI: ThatGerber/exacttarget-xml-feed
 GitHub Branch:     master
@@ -14,13 +14,10 @@ Github Branch:     master
 */
 
 /* Files */
-include 'includes/functions.xt-xml.php';
 include 'includes/class.xt-xml.php';
 include 'includes/class.xt-xml-feed.php';
-include 'includes/class.xt-xml-tag.php';
 include 'includes/class.xt-xml-admin.php';
 include 'includes/abstract.xt_xml_form.php';
-include 'includes/class.xt-xml-settings.php';
 include 'includes/class.xt-xml-admin-form.php';
 include 'includes/class.xt-xml-metabox.php';
 
