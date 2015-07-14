@@ -24,7 +24,7 @@ class XT_XML_Feed {
 	public function __construct( XT_XML $xml, $options_str ) {
 		$this->xml = $xml;
 		$this->options_str = $options_str;
-		// Let's get rid of stupid smart quotes
+		// Let's get rid of stupid smart quotes, please
 		remove_filter( 'the_content', 'wptexturize' );
 		remove_filter( 'the_excerpt', 'wptexturize' );
 		remove_filter( 'comment_text', 'wptexturize' );
@@ -35,18 +35,16 @@ class XT_XML_Feed {
 	 * Instantiates the feed.
 	 */
 	public function get_feed() {
-		global $xt_dirname;
-
 		// Declare an XML feed.
-		include( $xt_dirname .'/templates/feed-header.php' );
+		include( $this->xml->template_dir .'/templates/feed-header.php' );
 		if ( ( $query = $this->posts() ) && $query->have_posts() ) {
 			while ( $query->have_posts() ) {
 				$query->the_post();
-				include( $xt_dirname . '/templates/item-template.php' );
+				include( $this->xml->template_dir . '/templates/item-template.php' );
 			}
 			wp_reset_postdata();
 		}
-		include( $xt_dirname . '/templates/feed-footer.php' );
+		include( $this->xml->template_dir . '/templates/feed-footer.php' );
 	}
 
 
@@ -114,7 +112,7 @@ class XT_XML_Feed {
 				array(
 					'taxonomy' => $this->xml->taxonomy_slug,
 					'field'    => 'slug',
-					'terms'    => get_query_var( 'pagename' ),
+					'terms'    => get_query_var( $this->xml->taxonomy_slug ),
 				),
 			),
 		);

@@ -1,10 +1,11 @@
 <?php
 global $post;
 global $xt_xml_feed;
+var_dump( $post );
 ?>
 <item>
-	<title><?php the_title_rss() ?></title>
-	<link><?php the_permalink_rss() ?></link>
+	<title><?php the_title_rss(); ?></title>
+	<link><?php the_permalink_rss(); ?></link>
 	<image><?php $xt_xml_feed->feed_image( ); ?></image>
 	<description>
 		<![CDATA[ <?php $xt_xml_feed->the_description(); ?> ]]>

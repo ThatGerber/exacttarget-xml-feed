@@ -14,14 +14,14 @@ Github Branch:     master
 */
 
 /* Files */
-include 'includes/xt-xml.functions.php';
-include 'includes/xt-xml.class.php';
-include 'includes/xt-xml-feed.class.php';
-include 'includes/xt-xml-tag.class.php';
-include 'includes/xt-xml-admin.class.php';
+include 'includes/functions.xt-xml.php';
+include 'includes/class.xt-xml.php';
+include 'includes/class.xt-xml-feed.php';
+include 'includes/class.xt-xml-tag.php';
+include 'includes/class.xt-xml-admin.php';
 include 'includes/abstract.xt_xml_form.php';
-include 'includes/xt-xml-settings.class.php';
-include 'includes/xt-xml-admin-form.class.php';
+include 'includes/class.xt-xml-settings.php';
+include 'includes/class.xt-xml-admin-form.php';
 include 'includes/class.xt-xml-metabox.php';
 
 /* Directory */
@@ -31,6 +31,7 @@ $xt_tax_slug = 'email-tags';
 $xt_options_str = 'exact_target_xml';
 /* Fires up the Factory */
 $xt_xml = new XT_XML;
+$xt_xml->template_dir  = $xt_dirname;
 $xt_xml->options_str   = $xt_options_str;
 $xt_xml->taxonomy_slug = $xt_tax_slug;
 $xt_xml->taxonomy_name = 'Email Tags';
@@ -99,11 +100,10 @@ if ( is_admin() ) {
 
 		return $fields;
 	} ) );
-
+	/* Check for custom form submit value. If it exists, update the data that is there. */
 	if ( isset( $_POST['submit'] ) && $_POST['submit'] == 'Update Tags' ) {
 		update_option( $xt_xml->options_str, $_POST[ $xt_xml->options_str ] );
 	}
-
 	/* Tag Settings Page */
 	add_action( 'admin_menu', array( $xt_xml_admin, 'register_menu_page' ) );
 	add_action( 'admin_init', array( $xt_xml_admin, 'menu_page_init' ) );

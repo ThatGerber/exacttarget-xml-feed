@@ -53,6 +53,16 @@ class XT_XML {
      */
     public $values;
 
+	/**
+	 * Template directory
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @var string
+	 */
+	public $template_dir;
+
     /**
      * Returns options for a string
      *
