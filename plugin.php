@@ -10,7 +10,7 @@ GitHub Branch:     master
 Author URI:        http://www.chriswgerber.com/
 License:           GPL2
 Github URI:        https://github.com/ThatGerber/exacttarget-xml-feed
-Github Branch:     master
+Github Branch:     stable
 */
 
 /* Files */
