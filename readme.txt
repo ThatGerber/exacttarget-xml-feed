@@ -3,8 +3,8 @@
 Contributors: chriswgerber
 Tags: feed, xml, exact target
 Requires at least: 3.0.0
-Tested up to: 4.0
-Stable tag: 0.1.0
+Tested up to: 4.2.2
+Stable tag: 1.0.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,26 +12,50 @@ Custom XML feed formatted for Exact Target
 
 == Description ==
 
-This plugin creates a custom xml feed, formatted to be imported directly into Exact Target.
+This plugin creates a custom xml feed, formatted to be usable by Exact Target or other any
+other service that relies on information from RSS/XML feeds.
 
-The format is:
+Activating the plugin adds a custom taxonomy called "Email Tags" to posts. This custom
+taxonomy is utilized by the plugin to generate custom endpoints for rss feeds. "Email Tags"
+are custom tags that appear like any other archive in WordPress. However, custom layout
+settings can be applied on the plugin settings page to customize the length of the feed,
+the size of the images in the feed, and the length of the content in the feed.
+
+The plugin also creates a custom excerpt that can be used to override the default grabbed
+by the feed. Rather than using a portion of the content to generate the description, it
+will use the custom excerpt, if it exists. Otherwise, it'll pull an excerpt from the except,
+and finally from the post.
+
+The format of the feed is:
 
 ````
 <item>
-    <title>story title</title>
-    <link>story link</link>
-    <image>associated image</image>
-    <author>story author</author>
+    <title>Title of the Post</title>
+    <link>Permalink to the Post</link>
+    <image>Associated Image URL</image>
+    <description>Story Description</description>
 </item>
 ````
 
-Feeds can be located at `example.com/?feed=xtxml` or `example.com/category/category_name/?feed=xtxml`
+Feeds can be located at
+
+1. Base: `example.com/?feed=xtxml`
+2. Custom Email Tag: `example.com/email-tag/email-tag-slug/?feed=xtxml`
+3. Other taxonomy: `example.com/category/category_name/?feed=xtxml`
+
+*Note about images:*
+
+Because of the nature of image sizes, I will not add functionality to go back and resize
+all images for the correct categories. If you need to change it and go back to change image
+sizes, try the [Regenerate Thumbnails plugin](https://wordpress.org/plugins/regenerate-thumbnails/)
 
 == Installation ==
 
 1. Upload `exacttarget-xml-feed` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Done
+3. Create email tags to be used in stories.
+4. Go to the settings page and configure layout for the tags.
+5. Tag stories to appear in those feeds.
 
 == Frequently Asked Questions ==
 
@@ -39,12 +63,13 @@ None
 
 == Changelog ==
 
-None
+= 1.0.0
+
+* Initial Public Release
 
 == Upgrade Notice ==
 
-None
+If you are coming from the beta version, old feeds will not work properly. You will need to create new
+feeds with the new tag, and update them in your email service.
 
 == Screenshots ==
-
-None
