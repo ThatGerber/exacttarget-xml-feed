@@ -29,7 +29,7 @@ $xt_dirname = dirname( __FILE__ );
 /* A few constants */
 $xt_tax_slug = 'email-tags';
 $xt_options_str = 'exact_target_xml';
-/* Fires up the Factory */
+/* Fires up the instance */
 $xt_xml = new XT_XML;
 $xt_xml->template_dir  = $xt_dirname;
 $xt_xml->options_str   = $xt_options_str;
@@ -43,8 +43,7 @@ $xt_xml->defaults      = array(
 /* Register the Email Tag Taxonomy */
 add_action( 'init', array( $xt_xml, 'register_taxonomy' ), 0 );
 /* Adds image sizes */
-add_action( 'after_setup_theme', array( $xt_xml, 'add_image_sizes') );
-
+add_action( 'wp_loaded', array( $xt_xml, 'add_image_sizes') );
 /* Metabox */
 $xt_metabox = new XT_XML_Metabox;
 /* Settings */
@@ -55,7 +54,7 @@ $xt_metabox->register_metaboxes();
 $xt_metabox->register_save_data();
 
 /* Adds XML feed */
-$xt_xml_feed = new XT_XML_Feed( $xt_xml, $xt_options_str );
+$xt_xml_feed = new XT_XML_Feed( $xt_xml );
 $xt_xml_feed->desc_meta_key = $xt_metabox->meta_key;
 add_action( 'do_feed_xtxml', array( $xt_xml_feed, 'get_feed' ) );
 /* Taxonomy Create/Update/Delete Hooks */

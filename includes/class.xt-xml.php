@@ -90,21 +90,25 @@ class XT_XML {
 	 * @access public
 	 */
 	public function add_image_sizes() {
+		$this->tags = $this->get_options();
 		if (
 			is_array( $this->tags ) &&
-			count( $this->tags ) >= 0
+			count( $this->tags ) > 0
 		) {
-			foreach ( $this->tags as $field ) {
+			foreach ( $this->tags as $email_term_id => $email_tag ) {
+				// Get the full term to create the name
+				$email_term = get_term_by( 'id', $email_term_id, $this->taxonomy_slug );
+				// Explode image size, should be string (125x125)
+				$image_size = explode( 'x', $email_tag[ 'image_size' ] );
 				add_image_size(
-					$field->id . '-thumb',
-					$field->image_size[0],
-					$field->image_size[1],
+					$email_term->taxonomy . '/' . $email_term->slug . '/thumb',
+					$image_size[0],
+					$image_size[1],
 					true
 				);
 			}
 		}
-		add_image_size( 'featured-email-thumb', 200, 133, true );
-		add_image_size( 'email-thumb', 125, 90, true );
+		add_image_size( $this->taxonomy_slug . '/default/thumb', 125, 125, true );
 	}
 
 	/**
@@ -158,7 +162,7 @@ class XT_XML {
 
 		return get_terms( $this->taxonomy_slug, array(
 			'orderby'           => 'name',
-			'order'             => 'desc',
+			'order'             => 'asc',
 			'hide_empty'        => false,
 			'exclude'           => array(),
 			'exclude_tree'      => array(),
@@ -173,6 +177,7 @@ class XT_XML {
 	 * @return string
 	 */
 	public function tag_admin_url( $link ) {
+
 		return '<a href="://' . get_admin_url( null, 'edit-tags.php?taxonomy=' ) . __( $this->taxonomy_slug, 'xt_xml' ) . '">' . __( $link ) . '</a>';
 	}
 
@@ -215,4 +220,58 @@ class XT_XML {
 
 		return apply_filters( 'xt_xml_tag_post_types', array( 'post' ) );
 	}
+
+	/**
+	 * Return all queued image sizes.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 *
+	 * @param string $size size to return. Returns all if null
+	 *
+	 * @return array|bool
+	 */
+
+	public function get_image_sizes( $size = '' ) {
+
+		global $_wp_additional_image_sizes;
+
+		$sizes = array();
+		$get_intermediate_image_sizes = get_intermediate_image_sizes();
+
+		// Create the full array with sizes and crop info
+		foreach( $get_intermediate_image_sizes as $_size ) {
+
+			if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+
+				$sizes[ $_size ]['width'] = get_option( $_size . '_size_w' );
+				$sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
+				$sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
+
+			} elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
+
+				$sizes[ $_size ] = array(
+					'width' => $_wp_additional_image_sizes[ $_size ]['width'],
+					'height' => $_wp_additional_image_sizes[ $_size ]['height'],
+					'crop' =>  $_wp_additional_image_sizes[ $_size ]['crop']
+				);
+
+			}
+
+		}
+
+		// Get only 1 size if found
+		if ( $size ) {
+
+			if( isset( $sizes[ $size ] ) ) {
+				return $sizes[ $size ];
+			} else {
+				return false;
+			}
+
+		}
+
+		return $sizes;
+	}
+
 }

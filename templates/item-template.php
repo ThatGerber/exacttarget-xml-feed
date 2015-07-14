@@ -1,7 +1,6 @@
 <?php
 global $post;
 global $xt_xml_feed;
-var_dump( $post );
 ?>
 <item>
 	<title><?php the_title_rss(); ?></title>
