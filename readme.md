@@ -64,3 +64,18 @@ Feeds can be located at
 3. Create email tags to be used in stories.
 4. Go to the settings page and configure layout for the tags.
 5. Tag stories to appear in those feeds.
+
+## Screenshots:
+
+### Full View of the Feed
+[Feed View](http://www.chriswgerber.com/assets/uploads/2015/07/xtxml-feed-view.png)
+
+### View of Single Post: Except and Email Tags taxonomy visible
+[Single Post](http://www.chriswgerber.com/assets/uploads/2015/07/xtxml-feed-post-view.png)
+
+### Feed Settings Page
+[Settings Page](http://www.chriswgerber.com/assets/uploads/2015/07/xtxml-feed-settings-page.png)
+
+### List of Tags
+[Tags Page](http://www.chriswgerber.com/assets/uploads/2015/07/xtxml-feed-tags-page.png)
+
