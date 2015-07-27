@@ -5,6 +5,8 @@ Exact Target XML Feed
 
 This project has been moved to a new repo. [Customizable XML Feeds](https://github.com/ThatGerber/customizable-xml-feeds)
 
+---
+
 Contributors: chriswgerber
 Tags: feed, xml, exact target, custom xml feed
 Requires at least: 3.0.0
